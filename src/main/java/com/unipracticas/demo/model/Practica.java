@@ -1,7 +1,5 @@
 package com.unipracticas.demo.model;
 
-
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +20,7 @@ public class Practica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Información básica de la práctica
+    /* Información básica de la práctica */
     @Column(nullable = false, length = 150)
     private String titulo;
 
@@ -32,7 +30,7 @@ public class Practica {
     @Column(columnDefinition = "TEXT")
     private String requisitos;
 
-    // Detalles de la práctica
+    /* Detalles de la práctica */
     @Column(length = 100)
     private String area;
 
@@ -48,20 +46,21 @@ public class Practica {
     @Column(length = 150)
     private String ciudadUbicacion;
 
-    // Estado de la práctica
+    /* Estado de la práctica */
     @Column(length = 30)
     private String estado;
 
-    // Una práctica pertenece a una sola empresa
+    /* Una práctica pertenece a una sola empresa */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     private Empresa empresa;
 
-    // Una práctica puede tener varios estudiantes asignados
+    /* Una práctica puede tener varios estudiantes asignados,
+       respetando el número de vacantes */
     @OneToMany(mappedBy = "practica")
     private List<Estudiante> estudiantes;
 
-    // Una práctica puede recibir muchas postulaciones
+    /* Una práctica puede recibir muchas postulaciones */
     @OneToMany(
         mappedBy = "practica",
         cascade = CascadeType.ALL,
@@ -69,7 +68,7 @@ public class Practica {
     )
     private List<Postulacion> postulaciones;
 
-    // Una práctica puede tener varias evaluaciones
+    /* Una práctica puede tener varias evaluaciones */
     @OneToMany(mappedBy = "practica")
     private List<Evaluacion> evaluaciones;
 }

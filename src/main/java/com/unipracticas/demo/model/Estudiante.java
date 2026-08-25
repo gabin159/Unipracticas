@@ -1,11 +1,11 @@
 package com.unipracticas.demo.model;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
 import java.util.List;
 
 @Entity
@@ -20,7 +20,7 @@ public class Estudiante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Datos personales
+    /* Datos personales */
     @Column(nullable = false, length = 150)
     private String nombreCompleto;
 
@@ -33,7 +33,7 @@ public class Estudiante {
     @Column(length = 100)
     private String ciudad;
 
-    // Datos académicos
+    /* Datos académicos */
     @Column(nullable = false, length = 150)
     private String programaAcademico;
 
@@ -43,26 +43,27 @@ public class Estudiante {
     @Column(length = 150)
     private String facultad;
 
-    // Contraseña para iniciar sesión
+    /* Contraseña para iniciar sesión */
     @Column(nullable = false, length = 255)
     private String password;
 
-    // Un estudiante tiene un solo tutor
+    /* Un estudiante tiene un solo tutor */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id")
     private Tutor tutor;
 
-    // Un estudiante puede pertenecer a una sola empresa
-    // cuando su postulación es aceptada
+    /* Un estudiante pertenece a una sola empresa
+       cuando su postulación es aceptada */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    // Un estudiante realiza una sola práctica
-    @OneToOne(mappedBy = "estudiante")
+    /* Un estudiante puede realizar una sola práctica */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "practica_id")
     private Practica practica;
 
-    // Un estudiante puede realizar varias postulaciones
+    /* Un estudiante puede realizar varias postulaciones */
     @OneToMany(
         mappedBy = "estudiante",
         cascade = CascadeType.ALL,
@@ -70,7 +71,7 @@ public class Estudiante {
     )
     private List<Postulacion> postulaciones;
 
-    // Un estudiante puede subir varios documentos
+    /* Un estudiante puede subir varios documentos */
     @OneToMany(
         mappedBy = "estudiante",
         cascade = CascadeType.ALL,
@@ -78,7 +79,7 @@ public class Estudiante {
     )
     private List<Documento> documentos;
 
-    // Un estudiante puede subir varias evidencias
+    /* Un estudiante puede subir varias evidencias */
     @OneToMany(
         mappedBy = "estudiante",
         cascade = CascadeType.ALL,
@@ -86,7 +87,7 @@ public class Estudiante {
     )
     private List<Evidencia> evidencias;
 
-    // Un estudiante puede tener evaluaciones
+    /* Un estudiante puede tener evaluaciones */
     @OneToMany(mappedBy = "estudiante")
     private List<Evaluacion> evaluaciones;
 }
