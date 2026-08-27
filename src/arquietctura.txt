@@ -1,0 +1,110 @@
+UNIPRACTICAS
+│
+├── .github/                         
+├── .idea/                           
+├── .mvn/                            
+│
+└── src/
+    └── main/
+        │
+        ├── java/
+        │   └── com/
+        │       └── unipracticas/
+        │           └── demo/
+        │               │
+        │               ├── controller/             # Recibe las peticiones de las páginas
+        │               │   ├── EmpresaController.java
+        │               │   ├── EstudianteController.java
+        │               │   ├── PublicController.java
+        │               │   └── TutorController.java
+        │               │
+        │               ├── model/                  # Representa las entidades/tablas de la BD
+        │               │   ├── Documento.java
+        │               │   ├── Empresa.java
+        │               │   ├── Estudiante.java
+        │               │   ├── Evaluacion.java
+        │               │   ├── Evidencia.java
+        │               │   ├── Postulacion.java
+        │               │   ├── Practica.java
+        │               │   └── Tutor.java
+        │               │
+        │               ├── repository/              # Realiza las consultas a la base de datos
+        │               │   ├── DocumentoRepository.java
+        │               │   ├── EmpresaRepository.java
+        │               │   ├── EstudianteRepository.java
+        │               │   ├── EvaluacionRepository.java
+        │               │   ├── EvidenciaRepository.java
+        │               │   ├── PostulacionRepository.java
+        │               │   ├── PracticaRepository.java
+        │               │   └── TutorRepository.java
+        │               │
+        │               ├── service/                 # Contiene la lógica y reglas del sistema
+        │               │   ├── DocumentoService.java
+        │               │   ├── EmpresaService.java
+        │               │   ├── EstudianteService.java
+        │               │   ├── EvaluacionService.java
+        │               │   ├── EvidenciaService.java
+        │               │   ├── PostulacionService.java
+        │               │   ├── PracticaService.java
+        │               │   └── TutorService.java
+        │               │
+        │               └── DemoApplication.java     
+        │
+        └── resources/
+            │
+            ├── static/                             
+            │   │
+            │   ├── css/                             # Estilos visuales
+            │   │   ├── global.css                   # Estilos generales compartidos
+            │   │   ├── login.css                    # Estilos de los inicios de sesión
+            │   │   ├── estudiante.css               # Estilos propios del estudiante
+            │   │   ├── empresa.css                  # Estilos propios de la empresa
+            │   │   └── tutor.css                    # Estilos propios del tutor
+            │   │
+            │   ├── image/                            # Imágenes, logos e iconos
+            │   │
+            │   └── js/                              # JavaScript para interacciones
+            │
+            ├── templates/                           
+            │   │
+            │   ├── fragments/                       
+            │   │   ├── estudiante-sidebar.html      # Menú lateral del estudiante
+            │   │   ├── empresa-sidebar.html         # Menú lateral de la empresa
+            │   │   ├── tutor-sidebar.html           # Menú lateral del tutor
+            │   │   ├── header.html                  # Encabezado reutilizable
+            │   │   └── footer.html                  # Pie de página reutilizable
+            │   │
+            │   ├── public/                           # Páginas públicas
+            │   │   ├── index.html                   # Página principal pública
+            │   │   ├── empresas.html                # Lista de empresas
+            │   │   └── empresa-detalle.html         # Detalle de una empresa
+            │   │
+            │   ├── student/                          # Páginas del estudiante
+            │   │   ├── login.html                   # Inicio de sesión
+            │   │   ├── dashboard.html               # Panel principal
+            │   │   ├── perfil.html                  # Perfil y datos personales
+            │   │   ├── practicas.html               # Búsqueda de prácticas
+            │   │   ├── practica-detalle.html        # Información de una práctica
+            │   │   ├── confirmacion-postulacion.html # Resultado de la postulación
+            │   │   └── seguimiento.html             # Seguimiento de la práctica
+            │   │
+            │   ├── company/                         # Páginas de la empresa
+            │   │   ├── login.html                   # Inicio de sesión
+            │   │   ├── dashboard.html               # Panel principal
+            │   │   ├── perfil.html                  # Información de la empresa
+            │   │   ├── crear-practica.html          # Crear/publicar práctica
+            │   │   ├── practicas.html               # Lista de prácticas publicadas
+            │   │   ├── postulantes.html             # Gestión de postulantes
+            │   │   └── evaluacion.html              # Evaluación del estudiante
+            │   │
+            │   └── tutor/                           # Páginas del tutor
+            │       ├── login.html                   # Inicio de sesión y registro
+            │       ├── dashboard.html               # Panel principal
+            │       ├── perfil.html                  # Perfil del tutor
+            │       ├── estudiantes.html             # Lista de estudiantes asignados
+            │       ├── seguimiento.html             # Seguimiento de estudiantes
+            │       ├── evaluaciones.html            # Evaluaciones enviadas por empresas
+            │       ├── empresas.html                # Empresas aliadas y documentos
+            │       └── convenios.html               # Gestión/creación de convenios
+            │
+            └── application.properties               
