@@ -1,0 +1,35 @@
+/* ============================================================
+   global.css
+   Estilos base compartidos por TODO el sitio (public, student,
+   company, tutor). Aquí van fuentes, resets y utilidades que
+   Tailwind (CDN) no cubre directamente, como la fuente "display".
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
+
+:root {
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+}
+
+/* Equivalente a la clase "font-display" que usaban en el .tsx
+   (Tailwind por defecto no trae esa clase, así que la definimos
+   nosotros para no perder el estilo del mockup). */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Scrollbar más discreta para los paneles internos */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}

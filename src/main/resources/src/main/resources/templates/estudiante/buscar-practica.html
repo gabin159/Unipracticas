@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar prácticas · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/student.css}">
+</head>
+<body>
+<div class="student-layout">
+
+  <div th:replace="~{fragments/student-sidebar :: sidebar(activePage='buscar-practicas')}"></div>
+
+  <div class="student-content">
+    <!--
+      El filtrado es 100% client-side (igual que en React con useState),
+      así que el controller solo necesita mandar la lista completa de
+      prácticas activas en `practices`. student.js hace el resto.
+    -->
+    <div class="p-7" th:with="practicas=${practices} ?: {}">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900">Buscar prácticas</h1>
+        <p class="text-slate-500 text-sm mt-1"><span id="contadorResultados" th:text="${#lists.size(practicas)}">6</span> prácticas disponibles</p>
+      </div>
+
+      <!-- Filtros -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3">
+        <input id="filtroTexto" type="text" placeholder="Buscar por nombre, empresa o área..."
+               class="flex-1 text-sm border border-slate-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+        <select id="filtroArea" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none">
+          <option>Todas</option>
+          <option>Ciberseguridad</option>
+          <option>Ingeniería de Software</option>
+          <option>Marketing Digital</option>
+          <option>Finanzas</option>
+        </select>
+        <select id="filtroModalidad" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none">
+          <option>Todas</option>
+          <option>Presencial</option>
+          <option>Híbrida</option>
+          <option>Remota</option>
+        </select>
+      </div>
+
+      <!-- Resultados -->
+      <div class="grid grid-cols-2 gap-4" id="listaPracticas">
+
+        <div th:each="p : ${practicas}"
+             class="practica-card bg-white rounded-xl border border-slate-200 shadow-sm p-5 hover:shadow-md hover:border-blue-200 transition-all"
+             th:data-titulo="${#strings.toLowerCase(p.titulo)}"
+             th:data-empresa="${#strings.toLowerCase(p.empresa)}"
+             th:data-area="${p.area}"
+             th:data-modalidad="${p.modalidad}">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-xs font-bold" th:text="${p.iniciales}">BC</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-slate-900 text-sm leading-snug" th:text="${p.titulo}">Título</h3>
+              <p class="text-slate-500 text-xs" th:text="${p.empresa}">Empresa</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${p.area}">Área</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.modalidad}">Modalidad</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.duracion}">Duración</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500">📍 <span th:text="${p.ubicacion}">Ubicación</span> · <span th:text="${p.vacantes}">2</span> vacantes</span>
+            <a th:href="@{'/student/practicas/' + ${p.id}}" class="text-xs font-semibold text-blue-700 border border-blue-300 px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors">
+              Ver detalle →
+            </a>
+          </div>
+        </div>
+
+        <p id="sinResultados" class="hidden col-span-2 text-center text-sm text-slate-400 py-10">
+          No hay prácticas que coincidan con tu búsqueda.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/student.js}"></script>
+</body>
+</html>

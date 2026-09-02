@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Publicar práctica · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/company.css}">
+</head>
+<body>
+<div class="company-layout">
+
+  <div th:replace="~{fragments/company-sidebar :: sidebar(activePage='crear-practica')}"></div>
+
+  <div class="company-content">
+    <div class="p-7">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900">Publicar nueva práctica</h1>
+        <p class="text-slate-500 text-sm mt-1">Completa todos los campos para publicar</p>
+      </div>
+
+      <form th:action="@{/company/crear-practica}" method="post" id="formPractica">
+        <div class="grid grid-cols-3 gap-6">
+
+          <div class="col-span-2 space-y-4">
+
+            <!-- Información básica -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+              <h2 class="font-semibold text-slate-900 font-display">Información básica</h2>
+
+              <div>
+                <label for="titulo" class="text-xs font-medium text-slate-700 mb-1 block">Nombre de la práctica *</label>
+                <input id="titulo" name="titulo" required
+                       class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Ej: Analista de Ciberseguridad – Banca Digital">
+              </div>
+
+              <div>
+                <label for="descripcion" class="text-xs font-medium text-slate-700 mb-1 block">Descripción *</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required
+                          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                          placeholder="Describe las funciones y objetivos de la práctica..."></textarea>
+              </div>
+
+              <div>
+                <label for="requisitos" class="text-xs font-medium text-slate-700 mb-1 block">Requisitos *</label>
+                <textarea id="requisitos" name="requisitos" rows="3" required
+                          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                          placeholder="Un requisito por línea..."></textarea>
+              </div>
+            </div>
+
+            <!-- Detalles operativos -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="font-semibold text-slate-900 font-display mb-4">Detalles operativos</h2>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="area" class="text-xs font-medium text-slate-700 mb-1 block">Área *</label>
+                  <select id="area" name="area" required
+                          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>Ciberseguridad</option>
+                    <option>Ingeniería de Software</option>
+                    <option>Marketing Digital</option>
+                    <option>Finanzas</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="modalidad" class="text-xs font-medium text-slate-700 mb-1 block">Modalidad *</label>
+                  <select id="modalidad" name="modalidad" required
+                          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>Presencial</option>
+                    <option>Híbrida</option>
+                    <option>Remota</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="duracion" class="text-xs font-medium text-slate-700 mb-1 block">Duración *</label>
+                  <select id="duracion" name="duracion" required
+                          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>6 meses</option>
+                    <option>12 meses</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="vacantes" class="text-xs font-medium text-slate-700 mb-1 block">Vacantes *</label>
+                  <input id="vacantes" name="vacantes" type="number" min="1" required value="1"
+                         class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="col-span-2">
+                  <label for="ubicacion" class="text-xs font-medium text-slate-700 mb-1 block">Ciudad / Ubicación *</label>
+                  <input id="ubicacion" name="ubicacion" required
+                         class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                         placeholder="Ej: Medellín, Antioquia">
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-3">
+              <button type="submit" name="accion" value="publicar"
+                      class="bg-blue-700 text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-blue-800 transition-colors">
+                Publicar práctica
+              </button>
+              <button type="submit" name="accion" value="borrador"
+                      class="border border-slate-200 text-slate-600 font-medium text-sm px-6 py-2.5 rounded-lg hover:bg-slate-50 transition-colors">
+                Guardar borrador
+              </button>
+            </div>
+          </div>
+
+          <!-- Consejos -->
+          <div class="space-y-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p class="text-sm font-semibold text-blue-900 mb-2">📋 Antes de publicar</p>
+              <ul class="text-xs text-blue-800 space-y-1.5">
+                <li>• Verifica que la descripción sea clara</li>
+                <li>• La práctica será visible para todos los estudiantes</li>
+                <li>• Puedes editarla después de publicada</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

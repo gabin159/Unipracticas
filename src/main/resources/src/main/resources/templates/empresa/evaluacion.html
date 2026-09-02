@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Evaluación del estudiante · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/company.css}">
+</head>
+<body>
+<div class="company-layout">
+
+  <div th:replace="~{fragments/company-sidebar :: sidebar(activePage='evaluacion')}"></div>
+
+  <div class="company-content">
+    <div class="p-7">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900">Evaluación del estudiante</h1>
+        <p class="text-slate-500 text-sm mt-1" th:text="${estudiante?.nombre} + ' · ' + ${practica?.titulo}">
+          Mariana López García · Desarrollo de Software – Banca Digital
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-5">
+
+        <div class="col-span-2 space-y-4">
+
+          <!-- Datos del estudiante -->
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                 th:text="${estudiante != null ? #strings.substring(estudiante.nombre,0,1) : 'M'}">M</div>
+            <div class="flex-1">
+              <h2 class="font-bold text-slate-900" th:text="${estudiante?.nombre} ?: 'Mariana López García'">Mariana López García</h2>
+              <p class="text-slate-500 text-sm" th:text="${estudiante?.programa} + ' · ' + ${estudiante?.semestre} + ' semestre · UST'">
+                Ing. de Sistemas · 9° semestre · UST
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-500">Período</p>
+              <p class="text-sm font-semibold text-slate-900" th:text="${practica?.periodo} ?: '1 sep 2026 – 28 feb 2027'">1 sep 2026 – 28 feb 2027</p>
+            </div>
+          </div>
+
+          <!-- Formulario de evaluación -->
+          <form th:action="@{/company/evaluacion}" method="post" id="formEvaluacion">
+            <input type="hidden" name="estudianteId" th:value="${estudiante?.id}">
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
+                <h2 class="font-semibold text-slate-900 font-display text-sm">Criterios de evaluación</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Indica si el estudiante cumplió cada criterio</p>
+              </div>
+
+              <div class="divide-y divide-slate-100" id="listaCriterios">
+
+                <!--
+                  Los 8 criterios son fijos (parte del formato de evaluación de la UST),
+                  por eso van "quemados" aquí en vez de traerse de una lista dinámica.
+                  Cada uno es un radio Sí/No con el mismo `name` para que el navegador
+                  garantice que solo una opción quede marcada.
+                -->
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="puntualidad">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Puntualidad y asistencia</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Llegó a tiempo y cumplió su horario?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_puntualidad" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="presentacion">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Presentación y saludo</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Se presentó correctamente con el equipo?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_presentacion" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="tareas">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Cumplimiento de tareas</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Entregó las tareas asignadas a tiempo?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_tareas" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="calidad">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Calidad del trabajo</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿El trabajo tuvo la calidad esperada?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_calidad" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="actitud">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Actitud y disposición</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Mostró actitud positiva y ganas de aprender?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_actitud" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="comunicacion">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Comunicación con el equipo</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Se comunicó efectivamente con compañeros y líderes?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_comunicacion" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="iniciativa">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Iniciativa y autonomía</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Propuso ideas o resolvió problemas por su cuenta?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_iniciativa" value="">
+                </div>
+
+                <div class="px-5 py-4 flex items-center gap-4 criterio-row" data-criterio="normas">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-900">Cumplimiento de normas internas</p>
+                    <p class="text-xs text-slate-500 mt-0.5">¿Respetó las políticas y normas de la empresa?</p>
+                  </div>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="true">✓ Sí</button>
+                    <button type="button" class="eval-btn px-4 py-2 rounded-xl text-sm font-bold border-2 border-slate-200 text-slate-500" data-valor="false">✗ No</button>
+                  </div>
+                  <input type="hidden" name="criterio_normas" value="">
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm mt-4">
+              <label for="observaciones" class="text-sm font-semibold text-slate-900 font-display block mb-2">Observaciones adicionales</label>
+              <textarea id="observaciones" name="observaciones" rows="3"
+                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        placeholder="Comentarios sobre el desempeño general del estudiante..."></textarea>
+            </div>
+
+            <button type="submit" id="btnEnviarEvaluacion" disabled
+                    class="w-full mt-4 bg-blue-700 text-white font-bold text-sm py-3 rounded-xl hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+              Enviar evaluación al tutor universitario
+            </button>
+          </form>
+
+        </div>
+
+        <!-- Resumen -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-center">
+            <p class="text-xs text-slate-500 mb-1">Respondidos</p>
+            <p class="text-3xl font-bold font-display text-blue-700">
+              <span id="numRespondidos">0</span><span class="text-slate-400 text-lg"> / 8</span>
+            </p>
+            <div class="mt-3 bg-slate-100 rounded-full h-2">
+              <div id="barraProgreso" class="bg-blue-600 h-2 rounded-full transition-all" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div id="cardCumplimiento" class="hidden bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-center">
+            <p class="text-xs text-slate-500 mb-1">Cumplimiento</p>
+            <p id="pctCumplimiento" class="text-3xl font-bold font-display text-emerald-600">0%</p>
+            <p id="labelCumplimiento" class="text-xs text-slate-400 mt-1">Requiere mejora</p>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-2 font-medium">Resumen</p>
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs">
+                <span class="text-emerald-700 font-medium">✓ Cumplidos</span>
+                <span id="numCumplidos" class="font-bold text-emerald-700">0</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-red-600 font-medium">✗ No cumplidos</span>
+                <span id="numNoCumplidos" class="font-bold text-red-600">0</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">Sin responder</span>
+                <span id="numSinResponder" class="font-bold text-slate-400">8</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-violet-50 border border-violet-200 rounded-xl p-4">
+            <p class="text-xs font-semibold text-violet-900 mb-1">📤 ¿A quién se envía?</p>
+            <p class="text-xs text-violet-800 leading-relaxed">
+              Al <strong th:text="${practica?.tutor} ?: 'Prof. Javier Hernández'">Prof. Javier Hernández</strong>,
+              tutor universitario, quien la incluirá en el expediente académico de la estudiante.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/company.js}"></script>
+</body>
+</html>

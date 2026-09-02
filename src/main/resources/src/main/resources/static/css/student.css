@@ -1,0 +1,29 @@
+
+.student-layout {
+  display: flex;
+  min-height: 100vh;
+}
+ 
+.student-content {
+  flex: 1;
+  overflow: auto;
+  background: #f8fafc;
+}
+ 
+/* Ítem activo del sidebar de estudiante (azul, distinto al amarillo de empresa) */
+.sidebar-link.is-active {
+  background-color: #2563eb; /* blue-600 */
+  color: #ffffff;
+}
+ 
+/* Selector de emoji en el formulario de evidencias */
+.emoji-btn.is-selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+ 
+/* Pestañas Login / Registro */
+.auth-tab.is-active {
+  background-color: #1d4ed8; /* blue-700 */
+  color: #ffffff;
+}

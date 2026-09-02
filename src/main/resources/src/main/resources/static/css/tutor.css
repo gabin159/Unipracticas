@@ -1,0 +1,33 @@
+/* ============================================================
+   tutor.css
+   Ajustes puntuales del panel del TUTOR (TutorScreens.tsx).
+   Todo en violeta, para diferenciarlo del azul (student) y
+   amarillo (company).
+   ============================================================ */
+
+.tutor-layout { display: flex; min-height: 100vh; }
+.tutor-content { flex: 1; overflow: auto; background: #f8fafc; }
+
+.sidebar-link.is-active {
+  background-color: #7c3aed; /* violet-600 */
+  color: #ffffff;
+}
+
+.auth-tab.is-active {
+  background-color: #6d28d9; /* violet-700 */
+  color: #ffffff;
+}
+
+/* Pestañas de selección de estudiante en Seguimiento */
+.student-tab.is-active {
+  background-color: #6d28d9;
+  color: #ffffff;
+  border-color: #6d28d9;
+}
+
+/* Filas/tarjetas clickeables con panel de detalle (empresas, evaluaciones) */
+.row-clickable { cursor: pointer; }
+.row-clickable.is-selected {
+  background-color: #f5f3ff; /* violet-50 */
+  border-color: #a78bfa !important;
+}

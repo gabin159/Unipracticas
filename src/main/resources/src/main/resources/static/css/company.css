@@ -1,0 +1,50 @@
+/* ============================================================
+   company.css
+   Ajustes puntuales del panel de EMPRESA que no se logran
+   solo con clases de Tailwind (basado en CompanyScreens.tsx).
+   ============================================================ */
+
+/* El layout del panel de empresa es: sidebar fija + contenido
+   con scroll propio, tal como en el mockup de React. */
+.company-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.company-content {
+  flex: 1;
+  overflow: auto;
+  background: #f8fafc; /* slate-50 */
+}
+
+/* Estado seleccionado de un ítem del sidebar (equivalente a
+   la clase condicional `active === item.id` del componente). */
+.sidebar-link.is-active {
+  background-color: #ca8a04; /* yellow-600, como en el mockup */
+  color: #ffffff;
+}
+
+/* Tarjetas de resumen del dashboard */
+.stat-card p.stat-value {
+  font-family: var(--font-display);
+}
+
+/* Filas de tabla clickeables (postulantes) */
+tr.applicant-row {
+  cursor: pointer;
+}
+tr.applicant-row.is-selected {
+  background-color: #eff6ff; /* blue-50 */
+}
+
+/* Botones Sí/No de la evaluación, estado activo */
+.eval-btn.is-yes {
+  background-color: #059669;
+  border-color: #059669;
+  color: #fff;
+}
+.eval-btn.is-no {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}

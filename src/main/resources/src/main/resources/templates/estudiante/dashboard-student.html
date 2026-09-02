@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi panel · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/student.css}">
+</head>
+<body>
+<div class="student-layout">
+
+  <div th:replace="~{fragments/student-sidebar :: sidebar(activePage='dashboard')}"></div>
+
+  <div class="student-content">
+    <!--
+      practiceStatus viene del controller: "accepted" | "rejected" | "pending".
+      Si no llega nada, se usa "accepted" como en el mockup original.
+    -->
+    <div class="p-7" th:with="estado=${practiceStatus} ?: 'accepted'">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900"
+            th:text="'Bienvenida, ' + (${estudiante?.nombrePila} ?: 'Mariana') + ' 👋'">Bienvenida, Mariana 👋</h1>
+        <p class="text-slate-500 text-sm mt-1">Aquí está el estado de tu práctica empresarial</p>
+      </div>
+
+      <!-- ACEPTADA -->
+      <div th:if="${estado == 'accepted'}" class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 mb-6 text-white shadow-lg">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0"><span class="text-3xl">🎉</span></div>
+          <div class="flex-1">
+            <p class="text-emerald-100 text-xs font-medium uppercase tracking-wider mb-1">Práctica asignada</p>
+            <h2 class="text-xl font-bold font-display">¡Felicitaciones! Ya estás en Bancolombia</h2>
+            <p class="text-emerald-100 text-sm mt-1">Desarrollo de Software – Banca Digital · Inicio: 1 sep 2026</p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <p class="text-emerald-100 text-xs">Días para el inicio</p>
+            <p class="text-4xl font-bold font-display">18</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECHAZADA -->
+      <div th:if="${estado == 'rejected'}" class="bg-gradient-to-r from-slate-700 to-slate-800 rounded-2xl p-6 mb-6 text-white shadow-lg">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0"><span class="text-3xl">📋</span></div>
+          <div class="flex-1">
+            <p class="text-slate-300 text-xs font-medium uppercase tracking-wider mb-1">Postulación no seleccionada</p>
+            <h2 class="text-xl font-bold font-display">No fuiste seleccionada esta vez</h2>
+            <p class="text-slate-300 text-sm mt-1">Puedes buscar otra práctica disponible. Tu tutor te orientará.</p>
+          </div>
+          <a th:href="@{/student/buscar-practicas}" class="bg-white text-slate-800 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-slate-100 transition-colors flex-shrink-0">
+            Buscar prácticas
+          </a>
+        </div>
+      </div>
+
+      <!-- PENDIENTE -->
+      <div th:if="${estado == 'pending'}" class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 mb-6 text-white shadow-lg">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0"><span class="text-3xl">⏳</span></div>
+          <div>
+            <p class="text-amber-100 text-xs font-medium uppercase tracking-wider mb-1">En proceso</p>
+            <h2 class="text-xl font-bold font-display">Tu postulación está siendo revisada</h2>
+            <p class="text-amber-100 text-sm mt-1">Desarrollo de Software – Bancolombia · Tu tutor está evaluando tu perfil</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div class="col-span-2 space-y-4">
+
+          <!-- Detalle de la práctica -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-4">Detalle de tu práctica</h2>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-yellow-500 flex items-center justify-center flex-shrink-0">
+                <span class="text-white font-bold text-sm">BC</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-bold text-slate-900">Desarrollo de Software – Banca Digital</h3>
+                <p class="text-slate-500 text-sm">Bancolombia · Medellín, Antioquia</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200">Ingeniería de Software</span>
+                  <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">Híbrida</span>
+                  <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">6 meses</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-100">
+              <div><p class="text-xs text-slate-500">Inicio</p><p class="text-sm font-semibold text-slate-900">1 sep 2026</p></div>
+              <div><p class="text-xs text-slate-500">Fin estimado</p><p class="text-sm font-semibold text-slate-900">28 feb 2027</p></div>
+              <div><p class="text-xs text-slate-500">Tutor asignado</p><p class="text-sm font-semibold text-slate-900">Prof. Javier Hernández</p></div>
+            </div>
+          </div>
+
+          <!-- Progreso -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-3">Progreso de la práctica</h2>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs text-slate-500">Avance general</span>
+              <span class="text-sm font-bold text-blue-700">25%</span>
+            </div>
+            <div class="bg-slate-100 rounded-full h-3 mb-4"><div class="bg-blue-600 h-3 rounded-full" style="width:25%"></div></div>
+            <div class="grid grid-cols-4 gap-2">
+              <div class="rounded-xl border p-3 text-center bg-emerald-50 border-emerald-200"><span class="text-lg block mb-1">✅</span><p class="text-xs font-medium text-slate-700">Semana 1</p></div>
+              <div class="rounded-xl border p-3 text-center bg-emerald-50 border-emerald-200"><span class="text-lg block mb-1">✅</span><p class="text-xs font-medium text-slate-700">Semana 2</p></div>
+              <div class="rounded-xl border p-3 text-center bg-slate-50 border-slate-200"><span class="text-lg block mb-1">⏳</span><p class="text-xs font-medium text-slate-700">Semana 3</p></div>
+              <div class="rounded-xl border p-3 text-center bg-slate-50 border-slate-200"><span class="text-lg block mb-1">📝</span><p class="text-xs font-medium text-slate-700">Informe mes 1</p></div>
+            </div>
+          </div>
+
+          <!-- Actividad reciente -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-3">Actividad reciente</h2>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 bg-emerald-100 text-emerald-700">✅</span>
+                <div class="flex-1"><p class="text-sm text-slate-700">Postulación aprobada por el tutor</p><p class="text-xs text-slate-400 mt-0.5">5 ago 2026</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 bg-blue-100 text-blue-700">📄</span>
+                <div class="flex-1"><p class="text-sm text-slate-700">Hoja de vida enviada al proceso</p><p class="text-xs text-slate-400 mt-0.5">14 ago 2026</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 bg-violet-100 text-violet-700">✉️</span>
+                <div class="flex-1"><p class="text-sm text-slate-700">Mensaje de tu tutor: Prof. Javier Hernández</p><p class="text-xs text-slate-400 mt-0.5">13 ago 2026</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 bg-emerald-100 text-emerald-700">🚀</span>
+                <div class="flex-1"><p class="text-sm text-slate-700">Práctica confirmada con Bancolombia</p><p class="text-xs text-slate-400 mt-0.5">12 ago 2026</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h3 class="font-semibold text-slate-900 font-display text-sm mb-3">Mi tutor</h3>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-bold">JH</div>
+              <div><p class="text-sm font-semibold text-slate-900">Prof. Javier Hernández</p><p class="text-xs text-slate-500">Ing. de Sistemas · UST</p></div>
+            </div>
+            <a href="mailto:javier.hernandez@ust.edu.co?subject=Consulta%20sobre%20mi%20pr%C3%A1ctica"
+               class="block w-full text-center text-xs font-semibold text-violet-700 border border-violet-200 rounded-lg py-1.5 hover:bg-violet-50 transition-colors">
+              ✉️ Enviar mensaje
+            </a>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h3 class="font-semibold text-slate-900 font-display text-sm mb-3">Documentos pendientes</h3>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs"><span class="text-emerald-600">☑</span><span class="text-slate-600 line-through">Acta de inicio firmada</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="text-emerald-600">☑</span><span class="text-slate-600 line-through">Informe semana 1</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="text-emerald-600">☑</span><span class="text-slate-600 line-through">Informe semana 2</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="text-slate-300">☐</span><span class="text-slate-700">Informe semana 3</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="text-slate-300">☐</span><span class="text-slate-700">Firma del supervisor</span></div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <p class="text-xs font-semibold text-blue-900 mb-1">📅 Próxima entrega</p>
+            <p class="text-blue-800 text-xs">Informe de avance mensual</p>
+            <p class="text-blue-700 font-semibold text-sm mt-1">1 de octubre de 2026</p>
+          </div>
+
+          <a th:href="@{/student/seguimiento}" class="block text-center w-full bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-blue-800 transition-colors">
+            Ver seguimiento completo →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

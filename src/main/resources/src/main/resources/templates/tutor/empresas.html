@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Empresas aliadas · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/tutor.css}">
+</head>
+<body>
+<div class="tutor-layout">
+
+  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='empresas')}"></div>
+
+  <div class="tutor-content">
+    <div class="p-7">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold font-display text-slate-900">Empresas aliadas</h1>
+          <p class="text-slate-500 text-sm mt-1">6 empresas con convenio · 5 activos</p>
+        </div>
+        <a th:href="@{/tutor/convenios}" class="bg-violet-700 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-violet-800 transition-colors">
+          + Registrar empresa
+        </a>
+      </div>
+
+      <div class="grid gap-4" id="layoutEmpresas" style="grid-template-columns: 1fr;">
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100">
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Empresa</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Sector</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Contacto</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estudiantes</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Convenio</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estado</th>
+                <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide"></th>
+              </tr>
+            </thead>
+            <tbody id="tablaEmpresas">
+
+              <tr class="row-clickable border-b border-slate-100 transition-colors" data-target="detalle-bancolombia">
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-yellow-500 flex items-center justify-center flex-shrink-0"><span class="text-white text-[9px] font-bold">BC</span></div><span class="text-sm font-medium text-slate-900">Bancolombia</span></div></td>
+                <td class="px-4 py-3 text-xs text-slate-600">Servicios Financieros</td>
+                <td class="px-4 py-3 text-xs text-slate-600">Ana Sofía Giraldo</td>
+                <td class="px-4 py-3 text-center"><span class="text-sm font-bold text-emerald-600">2</span></td>
+                <td class="px-4 py-3 text-xs font-mono text-slate-500 whitespace-nowrap">CONV-UST-2023-015</td>
+                <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">Activo</span></td>
+                <td class="px-4 py-3"><button type="button" class="text-xs text-violet-700 hover:underline">Ver</button></td>
+              </tr>
+
+              <tr class="row-clickable border-b border-slate-100 transition-colors" data-target="detalle-epm">
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-green-600 flex items-center justify-center flex-shrink-0"><span class="text-white text-[9px] font-bold">EPM</span></div><span class="text-sm font-medium text-slate-900">EPM</span></div></td>
+                <td class="px-4 py-3 text-xs text-slate-600">Energía y Utilities</td>
+                <td class="px-4 py-3 text-xs text-slate-600">Ricardo Molina</td>
+                <td class="px-4 py-3 text-center"><span class="text-sm font-bold text-emerald-600">1</span></td>
+                <td class="px-4 py-3 text-xs font-mono text-slate-500 whitespace-nowrap">CONV-UST-2022-008</td>
+                <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">Activo</span></td>
+                <td class="px-4 py-3"><button type="button" class="text-xs text-violet-700 hover:underline">Ver</button></td>
+              </tr>
+
+              <tr class="row-clickable border-b border-slate-100 transition-colors" data-target="detalle-nutresa">
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-red-700 flex items-center justify-center flex-shrink-0"><span class="text-white text-[9px] font-bold">GN</span></div><span class="text-sm font-medium text-slate-900">Grupo Nutresa</span></div></td>
+                <td class="px-4 py-3 text-xs text-slate-600">Alimentos y Bebidas</td>
+                <td class="px-4 py-3 text-xs text-slate-600">Catalina Restrepo</td>
+                <td class="px-4 py-3 text-center"><span class="text-sm font-bold text-emerald-600">1</span></td>
+                <td class="px-4 py-3 text-xs font-mono text-slate-500 whitespace-nowrap">CONV-UST-2021-003</td>
+                <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">Por renovar</span></td>
+                <td class="px-4 py-3"><button type="button" class="text-xs text-violet-700 hover:underline">Ver</button></td>
+              </tr>
+
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-teal-600 flex items-center justify-center flex-shrink-0"><span class="text-white text-[9px] font-bold">EC</span></div><span class="text-sm font-medium text-slate-900">Ecopetrol</span></div></td>
+                <td class="px-4 py-3 text-xs text-slate-600">Petróleo y Gas</td>
+                <td class="px-4 py-3 text-xs text-slate-600">Andrés Parra</td>
+                <td class="px-4 py-3 text-center"><span class="text-sm font-bold text-slate-400">0</span></td>
+                <td class="px-4 py-3 text-xs font-mono text-slate-500 whitespace-nowrap">CONV-UST-2024-021</td>
+                <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">Activo</span></td>
+                <td class="px-4 py-3"><button type="button" class="text-xs text-violet-700 hover:underline" disabled>Ver</button></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Panel de detalle: Bancolombia (ejemplo) -->
+        <div id="detalle-bancolombia" class="detalle-empresa hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 flex items-center justify-between bg-yellow-500">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center"><span class="text-white text-xs font-bold">BC</span></div>
+              <div><p class="text-white font-semibold text-sm">Bancolombia</p><p class="text-white/70 text-xs">Servicios Financieros</p></div>
+            </div>
+            <button type="button" class="btn-cerrar-detalle text-white/70 hover:text-white text-lg">×</button>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <div><p class="text-xs text-slate-500">NIT</p><p class="text-xs font-medium text-slate-900">890.903.938-8</p></div>
+              <div><p class="text-xs text-slate-500">Contacto</p><p class="text-xs font-medium text-slate-900">Ana Sofía Giraldo</p></div>
+              <div><p class="text-xs text-slate-500">Correo</p><p class="text-xs font-medium text-slate-900" style="word-break:break-all">practicas@bancolombia.com.co</p></div>
+              <div><p class="text-xs text-slate-500">Teléfono</p><p class="text-xs font-medium text-slate-900">604 404 6161 ext. 7820</p></div>
+            </div>
+
+            <div>
+              <p class="text-xs font-semibold text-slate-700 mb-2">Documentos de la empresa</p>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-500">✓</span><span class="text-xs text-slate-700 flex-1">RUT (Registro Único Tributario)</span><span class="text-[10px] font-semibold text-emerald-600">Cargado</span></div>
+                <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-500">✓</span><span class="text-xs text-slate-700 flex-1">Cámara de Comercio</span><span class="text-[10px] font-semibold text-emerald-600">Cargado</span></div>
+                <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-500">✓</span><span class="text-xs text-slate-700 flex-1">Certificado de existencia y representación</span><span class="text-[10px] font-semibold text-emerald-600">Cargado</span></div>
+                <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-amber-400">⏳</span><span class="text-xs text-slate-700 flex-1">Póliza de responsabilidad civil</span><span class="text-[10px] font-semibold text-amber-600">Pendiente</span></div>
+                <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-500">✓</span><span class="text-xs text-slate-700 flex-1">Carta de intención firmada</span><span class="text-[10px] font-semibold text-emerald-600">Cargado</span></div>
+              </div>
+            </div>
+
+            <div>
+              <p class="text-xs font-semibold text-slate-700 mb-2">Practicantes vinculados</p>
+              <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg mb-1.5 text-xs">
+                <div class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-[9px] flex-shrink-0">M</div>
+                <span class="font-medium text-slate-900">Mariana López García</span>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">En curso</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <a href="mailto:practicas@bancolombia.com.co?subject=Convenio%20UST%20-%20Bancolombia" class="flex-1 text-center text-xs font-semibold text-violet-700 border border-violet-200 py-2 rounded-lg hover:bg-violet-50 transition-colors">
+                ✉️ Contactar
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel de detalle: EPM -->
+        <div id="detalle-epm" class="detalle-empresa hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 flex items-center justify-between bg-green-600">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center"><span class="text-white text-xs font-bold">EPM</span></div>
+              <div><p class="text-white font-semibold text-sm">EPM</p><p class="text-white/70 text-xs">Energía y Utilities</p></div>
+            </div>
+            <button type="button" class="btn-cerrar-detalle text-white/70 hover:text-white text-lg">×</button>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <div><p class="text-xs text-slate-500">NIT</p><p class="text-xs font-medium text-slate-900">890.904.996-1</p></div>
+              <div><p class="text-xs text-slate-500">Contacto</p><p class="text-xs font-medium text-slate-900">Ricardo Molina</p></div>
+              <div><p class="text-xs text-slate-500">Correo</p><p class="text-xs font-medium text-slate-900" style="word-break:break-all">practicas@epm.com.co</p></div>
+              <div><p class="text-xs text-slate-500">Teléfono</p><p class="text-xs font-medium text-slate-900">604 380 6060</p></div>
+            </div>
+            <div class="flex gap-2">
+              <a href="mailto:practicas@epm.com.co?subject=Convenio%20UST%20-%20EPM" class="flex-1 text-center text-xs font-semibold text-violet-700 border border-violet-200 py-2 rounded-lg hover:bg-violet-50 transition-colors">✉️ Contactar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel de detalle: Nutresa (con botón renovar, por estar "Por renovar") -->
+        <div id="detalle-nutresa" class="detalle-empresa hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 flex items-center justify-between bg-red-700">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center"><span class="text-white text-xs font-bold">GN</span></div>
+              <div><p class="text-white font-semibold text-sm">Grupo Nutresa</p><p class="text-white/70 text-xs">Alimentos y Bebidas</p></div>
+            </div>
+            <button type="button" class="btn-cerrar-detalle text-white/70 hover:text-white text-lg">×</button>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <div><p class="text-xs text-slate-500">NIT</p><p class="text-xs font-medium text-slate-900">890.903.070-6</p></div>
+              <div><p class="text-xs text-slate-500">Contacto</p><p class="text-xs font-medium text-slate-900">Catalina Restrepo</p></div>
+              <div><p class="text-xs text-slate-500">Correo</p><p class="text-xs font-medium text-slate-900" style="word-break:break-all">practicas@nutresa.com</p></div>
+              <div><p class="text-xs text-slate-500">Teléfono</p><p class="text-xs font-medium text-slate-900">604 319 0000</p></div>
+            </div>
+            <div class="flex gap-2">
+              <a href="mailto:practicas@nutresa.com?subject=Convenio%20UST%20-%20Grupo%20Nutresa" class="flex-1 text-center text-xs font-semibold text-violet-700 border border-violet-200 py-2 rounded-lg hover:bg-violet-50 transition-colors">✉️ Contactar</a>
+              <a th:href="@{/tutor/convenios}" class="flex-1 text-center text-xs font-semibold text-white bg-amber-500 py-2 rounded-lg hover:bg-amber-600 transition-colors">Renovar convenio</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/tutor.js}"></script>
+</body>
+</html>

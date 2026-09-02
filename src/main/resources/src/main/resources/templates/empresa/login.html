@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>UniPrácticas · Acceso empresas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind vía CDN: así seguimos usando las mismas clases del mockup de Figma/React sin reescribir todo en CSS puro -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 flex items-center justify-center p-8">
+
+  <div class="w-full max-w-md">
+
+    <!-- Logo y nombre del sistema -->
+    <div class="text-center mb-8">
+      <div class="w-12 h-12 rounded-xl bg-blue-700 flex items-center justify-center mx-auto mb-3">
+        <span class="text-white font-bold text-lg">UP</span>
+      </div>
+      <h1 class="text-2xl font-bold font-display text-slate-900">UniPrácticas</h1>
+      <p class="text-slate-500 text-sm">Portal de Empresas · UST</p>
+    </div>
+
+    <!-- Tarjeta de inicio de sesión -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-8">
+
+      <h2 class="text-xl font-bold font-display text-slate-900 mb-1">Acceso para empresas</h2>
+      <p class="text-slate-500 text-sm mb-6">Solo empresas con convenio activo con la universidad</p>
+
+      <!-- Aviso sobre el convenio -->
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-5">
+        <p class="text-emerald-800 text-xs font-medium">
+          ✓ Su empresa debe tener convenio vigente con la Universidad Santo Tomás Tunja para acceder al portal.
+        </p>
+      </div>
+
+      <!-- Formulario de login -->
+      <form th:action="@{/company/login}" method="post" id="loginForm">
+
+        <div class="space-y-4">
+          <div>
+            <label for="correo" class="text-xs font-medium text-slate-700 mb-1 block">Correo corporativo</label>
+            <input id="correo" name="correo" type="email" required
+                   class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                   placeholder="practicas@empresa.com.co">
+          </div>
+
+          <div>
+            <label for="password" class="text-xs font-medium text-slate-700 mb-1 block">Contraseña</label>
+            <input id="password" name="password" type="password" required
+                   class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                   placeholder="••••••••">
+          </div>
+        </div>
+
+        <!-- Mensaje de error (Spring Security suele mandar ?error en la URL) -->
+        <p th:if="${param.error}" class="text-red-600 text-xs mt-3 text-center">
+          Correo o contraseña incorrectos.
+        </p>
+
+        <button type="submit"
+                class="w-full mt-5 bg-blue-700 text-white font-semibold text-sm py-2.5 rounded-lg hover:bg-blue-800 transition-colors">
+          Iniciar sesión
+        </button>
+      </form>
+
+      <p class="text-center text-xs text-slate-500 mt-4">
+        ¿Su empresa no tiene convenio?
+        <a href="mailto:practicas@ustatunja.edu.co" class="text-blue-700 font-medium hover:underline">Contáctenos</a>
+      </p>
+
+    </div>
+  </div>
+
+</body>
+</html>

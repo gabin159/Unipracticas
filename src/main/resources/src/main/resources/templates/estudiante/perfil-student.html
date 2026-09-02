@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi perfil · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/student.css}">
+</head>
+<body>
+<div class="student-layout">
+
+  <div th:replace="~{fragments/student-sidebar :: sidebar(activePage='perfil')}"></div>
+
+  <div class="student-content">
+    <div class="p-7">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold font-display text-slate-900">Mi perfil</h1>
+          <p class="text-slate-500 text-sm mt-1">Datos personales, académicos y hoja de vida</p>
+        </div>
+        <button type="button" id="btnEditarPerfil"
+                class="text-sm font-medium px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors">
+          ✏️ Editar
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div class="col-span-2 space-y-4">
+
+          <!-- Datos personales -->
+          <form id="formDatosPersonales" th:action="@{/student/perfil}" method="post">
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="font-semibold text-slate-900 font-display mb-4">Datos personales</h2>
+              <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Nombre completo</p>
+                  <input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0"
+                         name="nombre" th:value="${estudiante?.nombre} ?: 'Mariana López García'" disabled>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Correo institucional</p>
+                  <input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0"
+                         name="correo" th:value="${estudiante?.correo}" disabled>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Teléfono</p>
+                  <input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0"
+                         name="telefono" th:value="${estudiante?.telefono}" disabled>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Ciudad</p>
+                  <input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0"
+                         name="ciudad" th:value="${estudiante?.ciudad}" disabled>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Dirección</p>
+                  <input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0"
+                         name="direccion" th:value="${estudiante?.direccion}" disabled>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <!-- Datos académicos (solo lectura, vienen del sistema académico) -->
+          <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-4">Datos académicos</h2>
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+              <div><p class="text-xs text-slate-500 mb-0.5">Programa académico</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante?.programa} ?: 'Ing. de Sistemas'">Ing. de Sistemas</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Facultad</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante?.facultad} ?: 'Ingeniería'">Ingeniería</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Semestre actual</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante?.semestre} ?: '9°'">9°</p></div>
+            </div>
+          </div>
+
+          <!-- Hoja de vida -->
+          <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-1">Hoja de vida</h2>
+            <p class="text-slate-500 text-xs mb-4">Este documento se comparte únicamente con la empresa que mandaste tu postulación.</p>
+
+            <div id="cvConArchivo" class="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0"><span class="text-red-500 text-lg">📄</span></div>
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-slate-900">HV_Mariana_Lopez_2026.pdf</p>
+                <p class="text-xs text-slate-500 mt-0.5">Cargada el 6 ago 2026 · 384 KB</p>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full border mt-1 inline-block bg-emerald-100 text-emerald-700 border-emerald-300">✓ Hoja de vida activa</span>
+              </div>
+              <div class="flex gap-2 flex-shrink-0">
+                <button type="button" class="text-xs text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">Ver</button>
+                <button type="button" id="btnEliminarCv" class="text-xs text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">Eliminar</button>
+              </div>
+            </div>
+
+            <label id="cvSinArchivo" class="hidden block">
+              <div class="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/30 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mx-auto mb-3"><span class="text-blue-600 text-xl">📤</span></div>
+                <p class="font-semibold text-slate-900 mb-1">Subir hoja de vida</p>
+                <p class="text-slate-500 text-sm mb-3">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+                <p class="text-xs text-slate-400">PDF, DOC o DOCX · Máximo 5 MB</p>
+                <span class="mt-4 inline-block bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-blue-800 transition-colors">Seleccionar archivo</span>
+              </div>
+              <input type="file" class="hidden" id="inputCv" accept=".pdf,.doc,.docx">
+            </label>
+
+            <div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p class="text-xs text-amber-800"><strong>🔒 Privacidad:</strong> Tu hoja de vida es confidencial. Solo la empresa puede acceder a ella. Para actualizarla, elimina la actual y sube una nueva versión.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-center">
+            <div class="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3"
+                 th:text="${estudiante?.iniciales} ?: 'ML'">ML</div>
+            <p class="font-semibold text-slate-900" th:text="${estudiante?.nombre} ?: 'Mariana López García'">Mariana López García</p>
+            <p class="text-xs text-slate-500 mt-0.5" th:text="${estudiante?.programa} ?: 'Ing. de Sistemas'">Ing. de Sistemas</p>
+            <p class="text-xs text-slate-500" th:text="${estudiante?.semestre} ?: '9° semestre'">9° semestre</p>
+            <button type="button" class="mt-3 text-xs text-blue-700 border border-blue-200 rounded-lg px-3 py-1.5 hover:bg-blue-50 transition-colors">Cambiar foto</button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-1">Tutor asignado</p>
+            <p class="text-sm font-semibold text-slate-900" th:text="${estudiante?.tutor} ?: 'Prof. Javier Hernández'">Prof. Javier Hernández</p>
+            <p class="text-xs text-slate-500">Dpto. Ing. de Sistemas</p>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <p class="text-xs font-semibold text-amber-800 mb-1">🔒 Privacidad</p>
+            <p class="text-xs text-amber-700 leading-relaxed">
+              Tus datos personales y hoja de vida son privados. Solo se comparten con el tutor asignado durante el proceso de postulación y la empresa a la cual te postulaste.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/student.js}"></script>
+</body>
+</html>

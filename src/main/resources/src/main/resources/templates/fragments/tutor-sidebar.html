@@ -1,0 +1,70 @@
+<!--
+  fragments/tutor-sidebar.html
+  Traducción del componente <Sidebar /> de TutorScreens.tsx.
+  Se inserta así: <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='dashboard')}"></div>
+-->
+<div th:fragment="sidebar(activePage)"
+     class="w-52 bg-slate-900 text-white flex flex-col flex-shrink-0 min-h-screen">
+
+  <div class="p-4 border-b border-slate-700">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-violet-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">UP</span>
+      </div>
+      <div>
+        <p class="font-semibold text-sm font-display">UniPrácticas</p>
+        <p class="text-xs text-slate-400">Portal del Tutor</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="flex-1 p-2 space-y-0.5">
+
+    <a th:href="@{/tutor/dashboard}" th:classappend="${activePage == 'dashboard'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">⊞</span><span>Panel principal</span>
+    </a>
+
+    <a th:href="@{/tutor/perfil}" th:classappend="${activePage == 'perfil'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">👤</span><span>Mi perfil</span>
+    </a>
+
+    <a th:href="@{/tutor/estudiantes}" th:classappend="${activePage == 'estudiantes'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">👥</span><span>Mis estudiantes</span>
+    </a>
+
+    <a th:href="@{/tutor/seguimiento}" th:classappend="${activePage == 'seguimiento'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">📊</span><span>Seguimiento</span>
+    </a>
+
+    <a th:href="@{/tutor/evaluaciones}" th:classappend="${activePage == 'evaluaciones'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">⭐</span><span>Evaluaciones</span>
+    </a>
+
+    <a th:href="@{/tutor/empresas}" th:classappend="${activePage == 'empresas'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">🏢</span><span>Empresas aliadas</span>
+    </a>
+
+    <a th:href="@{/tutor/convenios}" th:classappend="${activePage == 'convenios'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">📑</span><span>Gestionar convenios</span>
+    </a>
+
+  </nav>
+
+  <div class="p-3 border-t border-slate-700">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-xs font-bold">JH</div>
+      <div class="min-w-0">
+        <p class="text-xs font-medium truncate">Prof. Javier Hernández</p>
+        <p class="text-xs text-slate-400">Tutor universitario</p>
+      </div>
+    </div>
+  </div>
+
+</div>

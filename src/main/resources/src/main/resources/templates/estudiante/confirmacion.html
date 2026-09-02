@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>¡Felicitaciones! · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/student.css}">
+</head>
+<body>
+<div class="student-layout">
+
+  <div th:replace="~{fragments/student-sidebar :: sidebar(activePage='dashboard')}"></div>
+
+  <div class="student-content">
+    <div class="p-7 flex items-center justify-center" style="min-height: 70vh;">
+      <div class="max-w-lg w-full text-center">
+
+        <div class="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
+          <span class="text-5xl">🎉</span>
+        </div>
+        <h1 class="text-3xl font-bold font-display text-slate-900 mb-2">¡Felicitaciones!</h1>
+        <p class="text-emerald-700 font-semibold text-lg mb-1">Ya estás en Bancolombia</p>
+        <p class="text-slate-500 text-sm mb-8">
+          Fuiste seleccionada para la práctica <strong>Desarrollo de Software – Banca Digital</strong>.
+        </p>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 text-left mb-6 shadow-sm space-y-3">
+          <div class="flex justify-between items-center text-sm border-b border-slate-100 pb-2"><span class="text-slate-500">Empresa</span><span class="font-semibold text-slate-900">Bancolombia</span></div>
+          <div class="flex justify-between items-center text-sm border-b border-slate-100 pb-2"><span class="text-slate-500">Práctica</span><span class="font-semibold text-slate-900">Desarrollo de Software – Banca Digital</span></div>
+          <div class="flex justify-between items-center text-sm border-b border-slate-100 pb-2"><span class="text-slate-500">Modalidad</span><span class="font-semibold text-slate-900">Híbrida · Medellín</span></div>
+          <div class="flex justify-between items-center text-sm border-b border-slate-100 pb-2"><span class="text-slate-500">Duración</span><span class="font-semibold text-slate-900">6 meses</span></div>
+          <div class="flex justify-between items-center text-sm border-b border-slate-100 pb-2"><span class="text-slate-500">Fecha de inicio</span><span class="font-semibold text-slate-900">1 de septiembre de 2026</span></div>
+          <div class="flex justify-between items-center text-sm"><span class="text-slate-500">Tutor universitario</span><span class="font-semibold text-slate-900">Prof. Javier Hernández Ruiz</span></div>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-left mb-6">
+          <p class="text-blue-800 text-sm">
+            <strong>¿Qué sigue?</strong> Tu tutor se pondrá en contacto contigo para coordinar el acta de inicio y presentarte con el equipo de Bancolombia. Revisa tu correo institucional.
+          </p>
+        </div>
+
+        <a th:href="@{/student/dashboard}" class="inline-block bg-blue-700 text-white text-sm font-semibold px-8 py-3 rounded-xl hover:bg-blue-800 transition-colors">
+          Ir a mi panel principal
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

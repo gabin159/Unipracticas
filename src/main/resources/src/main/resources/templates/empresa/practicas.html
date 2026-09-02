@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis prácticas · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/company.css}">
+</head>
+<body>
+<div class="company-layout">
+
+  <div th:replace="~{fragments/company-sidebar :: sidebar(activePage='practicas')}"></div>
+
+  <div class="company-content">
+    <div class="p-7" th:with="practicas=${practices} ?: {}">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold font-display text-slate-900">Mis prácticas</h1>
+          <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' prácticas publicadas'">6 prácticas publicadas</p>
+        </div>
+        <a th:href="@{/company/crear-practica}"
+           class="bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+          + Publicar nueva
+        </a>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Práctica</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Área</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Modalidad</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Vacantes</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Postulantes</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estado</th>
+              <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${practicas}" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <td class="px-5 py-3">
+                <p class="text-sm font-medium text-slate-900" th:text="${p.titulo}">Nombre práctica</p>
+                <p class="text-xs text-slate-400" th:text="'Publicada ' + ${p.publicada}">Publicada hace 2 días</p>
+              </td>
+              <td class="px-5 py-3">
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${p.area}">Área</span>
+              </td>
+              <td class="px-5 py-3 text-sm text-slate-600" th:text="${p.modalidad}">Híbrida</td>
+              <td class="px-5 py-3 text-sm font-medium" th:text="${p.vacantes}">2</td>
+              <td class="px-5 py-3 text-sm font-semibold text-violet-700" th:text="${p.postulantes}">6</td>
+              <td class="px-5 py-3">
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200" th:text="${p.estado}">Activa</span>
+              </td>
+              <td class="px-5 py-3">
+                <div class="flex gap-2">
+                  <a th:href="@{/company/crear-practica(id=${p.id})}" class="text-xs text-blue-700 hover:underline">Editar</a>
+                  <span class="text-slate-300">|</span>
+                  <button type="button" class="text-xs text-slate-500 hover:text-red-600 btn-pausar" th:data-id="${p.id}">Pausar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(practicas)}">
+              <td colspan="7" class="text-center text-sm text-slate-400 py-8">Aún no has publicado ninguna práctica.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/company.js}"></script>
+</body>
+</html>

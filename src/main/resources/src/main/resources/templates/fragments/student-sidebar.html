@@ -1,0 +1,55 @@
+<div th:fragment="sidebar(activePage)"
+     class="w-52 bg-slate-900 text-white flex flex-col flex-shrink-0 min-h-screen">
+ 
+  <div class="p-4 border-b border-slate-700">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">UP</span>
+      </div>
+      <div>
+        <p class="font-semibold text-sm font-display">UniPrácticas</p>
+        <p class="text-xs text-slate-400">UST</p>
+      </div>
+    </div>
+  </div>
+ 
+  <nav class="flex-1 p-2 space-y-0.5">
+ 
+    <a th:href="@{/student/dashboard}"
+       th:classappend="${activePage == 'dashboard'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">⊞</span><span>Panel principal</span>
+    </a>
+ 
+    <a th:href="@{/student/perfil}"
+       th:classappend="${activePage == 'perfil'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">👤</span><span>Mi perfil</span>
+    </a>
+ 
+    <a th:href="@{/student/buscar-practicas}"
+       th:classappend="${activePage == 'buscar-practicas'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">🔍</span><span>Buscar prácticas</span>
+    </a>
+ 
+    <a th:href="@{/student/seguimiento}"
+       th:classappend="${activePage == 'seguimiento'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">📊</span><span>Seguimiento</span>
+    </a>
+ 
+  </nav>
+ 
+  <div class="p-3 border-t border-slate-700">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold"
+           th:text="${estudiante != null ? estudiante.iniciales : 'ML'}">ML</div>
+      <div class="min-w-0">
+        <p class="text-xs font-medium truncate" th:text="${estudiante != null ? estudiante.nombre : 'Mariana López G.'}">Mariana López G.</p>
+        <p class="text-xs text-slate-400">Estudiante</p>
+      </div>
+    </div>
+  </div>
+ 
+</div>
