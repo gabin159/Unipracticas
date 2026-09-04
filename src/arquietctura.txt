@@ -107,4 +107,7 @@ UNIPRACTICAS
             │       ├── empresas.html                # Empresas aliadas y documentos
             │       └── convenios.html               # Gestión/creación de convenios
             │
-            └── application.properties               
+            └── application.properties      
+
+
+            se corre mvn spring-boot:run y se busca enbn local hoot    
