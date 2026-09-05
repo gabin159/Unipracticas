@@ -1,0 +1,48 @@
+<!--
+  fragments/empresa-sidebar.html
+  Como no hay sesión, cada página necesita pasar el id de la empresa
+  para armar los links. Se inserta así:
+    <div th:replace="~{fragments/empresa-sidebar :: sidebar(activePage='perfil', empresaId=${empresa.id})}"></div>
+-->
+<div th:fragment="sidebar(activePage, empresaId)"
+     class="w-52 bg-slate-900 text-white flex flex-col flex-shrink-0 min-h-screen">
+
+  <div class="p-4 border-b border-slate-700">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-yellow-500 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">UP</span>
+      </div>
+      <div>
+        <p class="font-semibold text-sm font-display">UniPrácticas</p>
+        <p class="text-xs text-slate-400">Empresa aliada</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="flex-1 p-2 space-y-0.5">
+
+    <a th:href="@{/empresa/perfil/{id}(id=${empresaId})}"
+       th:classappend="${activePage == 'perfil'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">⊞</span><span>Mi panel / perfil</span>
+    </a>
+
+    <a th:href="@{/empresa/practicas/{id}(id=${empresaId})}"
+       th:classappend="${activePage == 'practicas'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">📋</span><span>Mis prácticas</span>
+    </a>
+
+    <a th:href="@{/empresa/practicas/nueva/{id}(id=${empresaId})}"
+       th:classappend="${activePage == 'crear'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">➕</span><span>Publicar práctica</span>
+    </a>
+
+  </nav>
+
+  <div class="p-3 border-t border-slate-700">
+    <p class="text-xs text-slate-400">Sesión de empresa</p>
+  </div>
+
+</div>

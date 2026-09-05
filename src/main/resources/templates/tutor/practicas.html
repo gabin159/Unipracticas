@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Prácticas · Tutor · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/tutor.css}">
+</head>
+<body>
+<div class="tutor-layout">
+
+  <!-- Igual que en estudiante/practicas: el controller no manda tutorId, lo leo del query param -->
+  <div th:with="tutorIdParam=${param.tutorId}">
+    <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='practicas', tutorId=${tutorIdParam})}"></div>
+  </div>
+
+  <div class="tutor-content">
+    <div class="p-7">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900">Prácticas</h1>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' prácticas'">0</p>
+      </div>
+
+      <form th:action="@{/tutor/practicas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3">
+        <input type="hidden" name="tutorId" th:value="${param.tutorId}">
+        <select name="estado" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none">
+          <option value="">Todos los estados</option>
+          <option value="DISPONIBLE" th:selected="${estado == 'DISPONIBLE'}">Disponible</option>
+          <option value="ASIGNADA" th:selected="${estado == 'ASIGNADA'}">Asignada</option>
+        </select>
+        <button type="submit" class="text-sm font-semibold text-white bg-violet-700 px-4 py-2 rounded-lg hover:bg-violet-800">Filtrar</button>
+      </form>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Práctica</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Empresa</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Vacantes</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Asignados</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${practicas}" class="border-b border-slate-100 hover:bg-slate-50">
+              <td class="px-4 py-3 text-sm font-medium text-slate-900" th:text="${p.titulo}">Título</td>
+              <td class="px-4 py-3 text-xs text-slate-600" th:text="${p.empresa.nombreEmpresa}">Empresa</td>
+              <td class="px-4 py-3 text-sm" th:text="${p.vacantes}">2</td>
+              <td class="px-4 py-3 text-sm font-semibold text-emerald-600" th:text="${#lists.size(p.estudiantes)}">0</td>
+              <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200" th:text="${p.estado}">Estado</span></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(practicas)}">
+              <td colspan="5" class="text-center text-sm text-slate-400 py-8">No hay prácticas registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

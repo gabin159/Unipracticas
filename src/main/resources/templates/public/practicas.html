@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Prácticas disponibles · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body class="bg-white text-slate-900">
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Prácticas disponibles</h1>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' resultados'">0 resultados</p>
+      </div>
+      <a th:href="@{/}" class="text-blue-700 text-sm font-medium hover:underline">← Volver al inicio</a>
+    </div>
+
+    <form th:action="@{/practicas}" method="get" class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex gap-3">
+      <input name="buscar" th:value="${buscar}" placeholder="Buscar por título, empresa o área..."
+             class="flex-1 text-sm border border-slate-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+      <button type="submit" class="text-sm font-semibold text-white bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-800">Buscar</button>
+    </form>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div th:each="p : ${practicas}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition-all">
+        <h3 class="font-semibold text-slate-900 text-sm" th:text="${p.titulo}">Título</h3>
+        <p class="text-slate-500 text-xs mt-1" th:text="${p.empresa.nombreEmpresa}">Empresa</p>
+        <div class="flex flex-wrap gap-1.5 mt-3">
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${p.area}">Área</span>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.modalidad}">Modalidad</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-3">📍 <span th:text="${p.ciudadUbicacion}">Ciudad</span> · <span th:text="${p.vacantes}">2</span> vacantes</p>
+        <a th:href="@{'/practicas/' + ${p.id}}" class="block mt-3 text-xs font-semibold text-blue-700 hover:underline">Ver detalle →</a>
+      </div>
+      <p th:if="${#lists.isEmpty(practicas)}" class="col-span-3 text-center text-sm text-slate-400 py-10">
+        No hay prácticas que coincidan con tu búsqueda.
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

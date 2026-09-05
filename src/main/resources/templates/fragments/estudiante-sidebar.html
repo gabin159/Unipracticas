@@ -1,58 +1,58 @@
 <!--
-  fragments/tutor-sidebar.html
-  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='perfil', tutorId=${tutor.id})}"></div>
+  fragments/estudiante-sidebar.html
+  Se inserta así: <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='perfil', estudianteId=${estudiante.id})}"></div>
 -->
-<div th:fragment="sidebar(activePage, tutorId)"
+<div th:fragment="sidebar(activePage, estudianteId)"
      class="w-52 bg-slate-900 text-white flex flex-col flex-shrink-0 min-h-screen">
 
   <div class="p-4 border-b border-slate-700">
     <div class="flex items-center gap-2">
-      <div class="w-7 h-7 rounded-md bg-violet-600 flex items-center justify-center">
+      <div class="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
         <span class="text-white text-xs font-bold">UP</span>
       </div>
       <div>
         <p class="font-semibold text-sm font-display">UniPrácticas</p>
-        <p class="text-xs text-slate-400">Portal del Tutor</p>
+        <p class="text-xs text-slate-400">UST</p>
       </div>
     </div>
   </div>
 
   <nav class="flex-1 p-2 space-y-0.5">
 
-    <a th:href="@{/tutor/perfil/{id}(id=${tutorId})}"
+    <a th:href="@{/estudiante/perfil/{id}(id=${estudianteId})}"
        th:classappend="${activePage == 'perfil'} ? 'is-active' : ''"
        class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
       <span class="text-base">⊞</span><span>Mi panel / perfil</span>
     </a>
 
-    <a th:href="@{/tutor/estudiantes/{id}(id=${tutorId})}"
-       th:classappend="${activePage == 'estudiantes'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">👥</span><span>Mis estudiantes</span>
-    </a>
-
-    <a th:href="@{/tutor/practicas(tutorId=${tutorId})}"
+    <a th:href="@{/estudiante/practicas(estudianteId=${estudianteId})}"
        th:classappend="${activePage == 'practicas'} ? 'is-active' : ''"
        class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">📊</span><span>Prácticas</span>
+      <span class="text-base">🔍</span><span>Buscar prácticas</span>
     </a>
 
-    <a th:href="@{/tutor/evaluaciones/{id}(id=${tutorId})}"
-       th:classappend="${activePage == 'evaluaciones'} ? 'is-active' : ''"
+    <a th:href="@{/estudiante/postulaciones/{id}(id=${estudianteId})}"
+       th:classappend="${activePage == 'postulaciones'} ? 'is-active' : ''"
        class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">⭐</span><span>Evaluaciones</span>
+      <span class="text-base">📄</span><span>Mis postulaciones</span>
     </a>
 
-    <a th:href="@{/tutor/empresas(tutorId=${tutorId})}"
-       th:classappend="${activePage == 'empresas'} ? 'is-active' : ''"
+    <a th:href="@{/estudiante/documentos/{id}(id=${estudianteId})}"
+       th:classappend="${activePage == 'documentos'} ? 'is-active' : ''"
        class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">🏢</span><span>Empresas aliadas</span>
+      <span class="text-base">📁</span><span>Documentos</span>
+    </a>
+
+    <a th:href="@{/estudiante/evidencias/{id}(id=${estudianteId})}"
+       th:classappend="${activePage == 'evidencias'} ? 'is-active' : ''"
+       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+      <span class="text-base">📸</span><span>Evidencias</span>
     </a>
 
   </nav>
 
   <div class="p-3 border-t border-slate-700">
-    <p class="text-xs text-slate-400">Sesión de tutor</p>
+    <p class="text-xs text-slate-400">Sesión de estudiante</p>
   </div>
 
 </div>

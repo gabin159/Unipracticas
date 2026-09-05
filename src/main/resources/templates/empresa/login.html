@@ -36,7 +36,7 @@
       </div>
 
       <!-- Formulario de login -->
-      <form th:action="@{/company/login}" method="post" id="loginForm">
+      <form th:action="@{/empresa/login}" method="post" id="loginForm">
 
         <div class="space-y-4">
           <div>
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Mensaje de error (Spring Security suele mandar ?error en la URL) -->
-        <p th:if="${param.error}" class="text-red-600 text-xs mt-3 text-center">
+        <p th:if="${error}" class="text-red-600 text-xs mt-3 text-center" th:text="${error}">
           Correo o contraseña incorrectos.
         </p>
 

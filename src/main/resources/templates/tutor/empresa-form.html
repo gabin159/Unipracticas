@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar empresa · Tutor · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+  <link rel="stylesheet" th:href="@{/css/tutor.css}">
+</head>
+<body>
+<div class="tutor-layout">
+
+  <div th:with="tutorIdParam=${param.tutorId}">
+    <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='empresas', tutorId=${tutorIdParam})}"></div>
+  </div>
+
+  <div class="tutor-content">
+    <div class="p-7" style="max-width:560px">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900">Registrar empresa</h1>
+        <p class="text-slate-500 text-sm mt-1">Crea el acceso para que la empresa pueda ingresar al sistema</p>
+      </div>
+
+      <form th:action="@{/tutor/empresas/guardar}" th:object="${empresa}" method="post" class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div>
+          <label class="text-xs font-medium text-slate-700 mb-1 block">Nombre de la empresa *</label>
+          <input th:field="*{nombreEmpresa}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-slate-700 mb-1 block">NIT *</label>
+            <input th:field="*{nit}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-slate-700 mb-1 block">Sector</label>
+            <input th:field="*{sector}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700 mb-1 block">Nombre de contacto *</label>
+          <input th:field="*{nombreContacto}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-slate-700 mb-1 block">Correo *</label>
+            <input type="email" th:field="*{correo}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-slate-700 mb-1 block">Teléfono</label>
+            <input th:field="*{telefono}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700 mb-1 block">Dirección</label>
+          <input th:field="*{direccion}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700 mb-1 block">Contraseña de acceso *</label>
+          <input type="password" th:field="*{password}" required minlength="8" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
+                 placeholder="Se la compartes tú a la empresa">
+        </div>
+
+        <button type="submit" class="w-full bg-violet-700 text-white font-semibold text-sm py-2.5 rounded-xl hover:bg-violet-800">
+          Registrar empresa
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

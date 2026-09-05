@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Evaluaciones · UniPrácticas</title>
+  <title>Evaluaciones · Tutor · UniPrácticas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" th:href="@{/css/global.css}">
@@ -11,107 +11,38 @@
 <body>
 <div class="tutor-layout">
 
-  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='evaluaciones')}"></div>
+  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='evaluaciones', tutorId=${tutorId})}"></div>
 
   <div class="tutor-content">
     <div class="p-7">
-
       <div class="mb-6">
-        <h1 class="text-2xl font-bold font-display text-slate-900">Evaluaciones de empresas</h1>
-        <p class="text-slate-500 text-sm mt-1">Evaluaciones enviadas por las empresas sobre los practicantes</p>
+        <h1 class="text-2xl font-bold font-display text-slate-900">Evaluaciones recibidas</h1>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(evaluaciones)} + ' evaluaciones'">0</p>
       </div>
 
-      <div class="grid gap-4" id="layoutEvaluaciones" style="grid-template-columns: 1fr;">
-
-        <!-- Lista de tarjetas -->
-        <div class="space-y-3">
-
-          <!-- Card 1: Mariana (tiene evaluación) -->
-          <div class="row-clickable bg-white rounded-xl border border-slate-200 p-5 shadow-sm transition-all hover:border-violet-300"
-               data-target="detalle-mariana">
-            <div class="flex items-start gap-4">
-              <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold flex-shrink-0">M</div>
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold text-slate-900">Mariana López García</p>
-                <p class="text-slate-500 text-xs">Bancolombia · Desarrollo de Software – Banca Digital</p>
-                <div class="mt-2 flex items-center gap-3">
-                  <div class="flex-1 bg-slate-100 rounded-full h-2"><div class="h-2 rounded-full bg-emerald-500" style="width:88%"></div></div>
-                  <span class="text-sm font-bold text-emerald-600">88%</span>
-                </div>
-              </div>
-              <div class="text-right flex-shrink-0">
-                <p class="text-xs text-slate-400">18 ago 2026</p>
-                <span class="text-xs font-medium px-2 py-0.5 rounded-full border mt-1 inline-block bg-violet-50 text-violet-700 border-violet-200">7/8</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 2: Laura (sin evaluación aún, no clicable) -->
-          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm" style="opacity:.7">
-            <div class="flex items-start gap-4">
-              <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold flex-shrink-0">L</div>
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold text-slate-900">Laura Sofía Restrepo</p>
-                <p class="text-slate-500 text-xs">EPM · Análisis de Datos Energéticos</p>
-                <span class="text-xs font-medium px-2 py-0.5 rounded-full border mt-2 inline-block bg-amber-50 text-amber-700 border-amber-200">Pendiente de empresa</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Panel de detalle: pre-renderizado, oculto por defecto -->
-        <div id="detalle-mariana" class="detalle-evaluacion hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="bg-violet-700 px-5 py-3 flex items-center justify-between">
+      <div class="space-y-3">
+        <div th:each="ev : ${evaluaciones}" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-start justify-between">
             <div>
-              <p class="text-white font-semibold text-sm">Mariana López García</p>
-              <p class="text-violet-200 text-xs">Bancolombia · 18 ago 2026</p>
+              <p class="font-semibold text-slate-900" th:text="${ev.estudiante.nombreCompleto}">Estudiante</p>
+              <p class="text-slate-500 text-xs" th:text="${ev.empresa.nombreEmpresa} + ' · ' + ${ev.practica.titulo}">Empresa · Práctica</p>
+              <p class="text-slate-400 text-xs mt-1" th:text="${ev.fecha}">Fecha</p>
             </div>
-            <button type="button" class="btn-cerrar-detalle text-violet-200 hover:text-white text-lg leading-none">×</button>
+            <div class="text-right">
+              <p class="text-2xl font-bold font-display"
+                 th:classappend="${ev.calificacion != null and ev.calificacion >= 4.0} ? 'text-emerald-600' : 'text-amber-600'"
+                 th:text="${ev.calificacion} + ' / 5.0'">4.5 / 5.0</p>
+            </div>
           </div>
-
-          <div class="p-5 space-y-4">
-            <div>
-              <p class="text-xs font-semibold text-slate-700 mb-2">Criterios evaluados</p>
-              <div class="space-y-1.5">
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Puntualidad y asistencia</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Presentación y saludo</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Cumplimiento de tareas</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Calidad del trabajo</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Actitud y disposición</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Comunicación con el equipo</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-red-500">✗</span><span class="text-slate-700">Iniciativa y autonomía</span></div>
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100"><span class="text-emerald-600">✓</span><span class="text-slate-700">Cumplimiento de normas</span></div>
-              </div>
-            </div>
-
-            <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 text-center">
-              <p class="text-xs text-slate-500 mb-1">Cumplimiento</p>
-              <p class="text-3xl font-bold font-display text-emerald-600">88%</p>
-              <p class="text-xs text-slate-400 mt-1">7 de 8 criterios cumplidos</p>
-            </div>
-
-            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              <p class="text-xs font-semibold text-yellow-900 mb-1">Comentarios de la empresa</p>
-              <p class="text-xs text-yellow-800 leading-relaxed">Mariana es una practicante muy dedicada. Se integró rápido al equipo y cumplió todos los entregables.</p>
-            </div>
-
-            <form th:action="@{/tutor/evaluaciones/UST-2021-1234/notas}" method="post">
-              <label for="notasTutor" class="text-xs font-semibold text-slate-700 mb-1 block">Notas del tutor sobre esta evaluación</label>
-              <textarea id="notasTutor" name="notas" rows="3" placeholder="Escribe tus observaciones..."
-                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
-              <button type="submit" class="w-full mt-3 bg-violet-700 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-violet-800 transition-colors">
-                Guardar notas
-              </button>
-            </form>
-          </div>
+          <p th:if="${ev.comentarios != null and !ev.comentarios.isEmpty()}"
+             class="text-xs text-slate-600 bg-slate-50 border border-slate-100 rounded-lg p-3 mt-3" th:text="${ev.comentarios}">
+            Comentarios
+          </p>
         </div>
-
+        <p th:if="${#lists.isEmpty(evaluaciones)}" class="text-center text-sm text-slate-400 py-10">Aún no has recibido evaluaciones de empresas.</p>
       </div>
     </div>
   </div>
 </div>
-
-<script th:src="@{/js/tutor.js}"></script>
 </body>
 </html>

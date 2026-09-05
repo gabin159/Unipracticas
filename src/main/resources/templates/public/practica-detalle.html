@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle de práctica · UniPrácticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body class="bg-white text-slate-900">
+
+  <div class="max-w-4xl mx-auto px-6 py-10">
+
+    <p class="text-xs text-slate-500 mb-4">
+      <a th:href="@{/practicas}" class="text-blue-600 hover:underline">Prácticas disponibles</a>
+      · <span th:text="${practica.titulo}">Título</span>
+    </p>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-4">
+      <h1 class="text-xl font-bold text-slate-900" th:text="${practica.titulo}">Título</h1>
+      <p class="text-slate-600 text-sm font-medium" th:text="${practica.empresa.nombreEmpresa}">Empresa</p>
+      <div class="flex gap-2 mt-2">
+        <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${practica.area}">Área</span>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${practica.modalidad}">Modalidad</span>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200" th:text="${practica.estado}">Estado</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-4">
+      <h2 class="font-semibold text-slate-900 mb-2">Descripción</h2>
+      <p class="text-slate-600 text-sm leading-relaxed" th:text="${practica.descripcion}">Descripción</p>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-4">
+      <h2 class="font-semibold text-slate-900 mb-2">Requisitos</h2>
+      <p class="text-slate-600 text-sm leading-relaxed whitespace-pre-line" th:text="${practica.requisitos}">Requisitos</p>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm mb-4">
+      <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-xs text-slate-500">Duración</span><span class="text-xs font-medium text-slate-900" th:text="${practica.duracion}">6 meses</span></div>
+      <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-xs text-slate-500">Ubicación</span><span class="text-xs font-medium text-slate-900" th:text="${practica.ciudadUbicacion}">Ciudad</span></div>
+      <div class="flex justify-between py-2"><span class="text-xs text-slate-500">Vacantes</span><span class="text-xs font-medium text-slate-900" th:text="${practica.vacantes} + ' disponibles'">2 disponibles</span></div>
+    </div>
+
+    <!-- Postularse requiere sesión de estudiante. Como no hay sesión, mandamos a login
+         y desde ahí el estudiante puede buscar la práctica de nuevo ya logueado. -->
+    <div class="bg-blue-700 rounded-xl p-5 flex items-center justify-between text-white">
+      <div>
+        <p class="font-semibold text-sm">¿Listo para postularte?</p>
+        <p class="text-blue-200 text-xs mt-0.5">Necesitas iniciar sesión como estudiante</p>
+      </div>
+      <a th:href="@{/estudiante/login}" class="bg-white text-blue-700 font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-blue-50">
+        Iniciar sesión →
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

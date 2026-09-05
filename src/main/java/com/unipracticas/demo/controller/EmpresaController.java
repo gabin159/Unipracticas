@@ -212,20 +212,16 @@ public class EmpresaController {
      * Muestra las postulaciones recibidas para una práctica.
      */
     @GetMapping("/postulaciones/{practicaId}")
-    public String postulaciones(
-            @PathVariable Long practicaId,
-            Model model) {
+public String postulaciones(@PathVariable Long practicaId, Model model) {
+    List<Postulacion> postulaciones = postulacionService.listarPorPractica(practicaId);
+    model.addAttribute("postulaciones", postulaciones);
 
-        List<Postulacion> postulaciones =
-                postulacionService.listarPorPractica(practicaId);
+    // Agregar estas 2 líneas:
+    Practica practica = practicaService.buscarPorId(practicaId);
+    model.addAttribute("empresaId", practica.getEmpresa().getId());
 
-        model.addAttribute(
-                "postulaciones",
-                postulaciones
-        );
-
-        return "empresa/postulaciones";
-    }
+    return "empresa/postulaciones";
+}
 
 
     /*

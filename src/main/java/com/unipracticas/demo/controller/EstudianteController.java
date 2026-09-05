@@ -184,6 +184,7 @@ public class EstudianteController {
                 postulacionService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("postulaciones", postulaciones);
+        model.addAttribute("estudianteId", estudianteId);
 
         return "estudiante/postulaciones";
     }
@@ -232,6 +233,7 @@ public class EstudianteController {
                 documentoService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("documentos", documentos);
+        model.addAttribute("estudianteId", estudianteId);
 
         return "estudiante/documentos";
     }
@@ -281,6 +283,7 @@ public class EstudianteController {
                 evidenciaService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("evidencias", evidencias);
+        model.addAttribute("estudianteId", estudianteId);
 
         return "estudiante/evidencias";
     }

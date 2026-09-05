@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Mi perfil · UniPrácticas</title>
+  <title>Mi panel · Tutor · UniPrácticas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" th:href="@{/css/global.css}">
@@ -11,91 +11,72 @@
 <body>
 <div class="tutor-layout">
 
-  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='perfil')}"></div>
+  <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='perfil', tutorId=${tutor.id})}"></div>
 
   <div class="tutor-content">
     <div class="p-7">
 
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-bold font-display text-slate-900">Mi perfil</h1>
-          <p class="text-slate-500 text-sm mt-1">Datos personales e información institucional</p>
-        </div>
-        <button type="button" id="btnEditarPerfil" class="text-sm font-medium px-4 py-2 rounded-lg bg-violet-700 text-white hover:bg-violet-800 transition-colors">
-          ✏️ Editar
-        </button>
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold font-display text-slate-900" th:text="'Bienvenido, ' + ${tutor.nombreCompleto} + ' 👋'">Bienvenido</h1>
+        <p class="text-slate-500 text-sm mt-1" th:text="${tutor.departamento}">Departamento</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <a th:href="@{/tutor/estudiantes/{id}(id=${tutor.id})}" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-violet-300">
+          <p class="text-xs text-slate-500 mb-1">Estudiantes asignados</p>
+          <p class="text-2xl font-bold font-display text-emerald-600" th:text="${#lists.size(tutor.estudiantes)}">0</p>
+        </a>
+        <a th:href="@{/tutor/evaluaciones/{id}(id=${tutor.id})}" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-violet-300">
+          <p class="text-xs text-slate-500 mb-1">Evaluaciones recibidas</p>
+          <p class="text-2xl font-bold font-display text-violet-600" th:text="${#lists.size(tutor.evaluaciones)}">0</p>
+        </a>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
         <div class="col-span-2 space-y-4">
 
-          <form id="formDatosTutor" th:action="@{/tutor/perfil}" method="post">
-            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-              <h2 class="font-semibold text-slate-900 font-display mb-4">Datos personales</h2>
-              <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div><p class="text-xs text-slate-500 mb-0.5">Nombre completo</p><input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0" name="nombre" value="Javier Hernández Ruiz" disabled></div>
-                <div><p class="text-xs text-slate-500 mb-0.5">Correo institucional</p><input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0" name="correo" th:value="${tutor?.correo} ?: 'javier.hernandez@ust.edu.co'" disabled></div>
-                <div><p class="text-xs text-slate-500 mb-0.5">Teléfono</p><input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0" name="telefono" value="315 234 5678" disabled></div>
-                <div><p class="text-xs text-slate-500 mb-0.5">Ciudad</p><input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0" name="ciudad" value="Tunja, Boyacá" disabled></div>
-                <div><p class="text-xs text-slate-500 mb-0.5">Dirección</p><input class="campo-perfil text-sm font-medium text-slate-900 w-full bg-transparent border-0 p-0" name="direccion" value="Cra. 9 #51-11, Tunja" disabled></div>
+          <!-- Estudiantes asignados (vista rápida) -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h2 class="font-semibold text-slate-900 font-display mb-4">Estudiantes asignados</h2>
+            <div class="space-y-2">
+              <div th:each="e : ${tutor.estudiantes}" class="flex items-center gap-3 p-3 border border-slate-100 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0"
+                     th:text="${#strings.substring(e.nombreCompleto,0,1)}">M</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900" th:text="${e.nombreCompleto}">Nombre</p>
+                  <p class="text-xs text-slate-500" th:text="${e.practica != null ? e.practica.titulo : 'Sin práctica asignada'}">Práctica</p>
+                </div>
               </div>
-            </div>
-          </form>
-
-          <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <h2 class="font-semibold text-slate-900 font-display mb-4">Datos institucionales</h2>
-            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-              <div><p class="text-xs text-slate-500 mb-0.5">Cargo</p><p class="text-sm font-medium text-slate-900">Docente titular</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Departamento</p><p class="text-sm font-medium text-slate-900" th:text="${tutor?.departamento} ?: 'Ing. de Sistemas'">Ing. de Sistemas</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Facultad</p><p class="text-sm font-medium text-slate-900">Facultad de Ingeniería</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Oficina</p><p class="text-sm font-medium text-slate-900" th:text="${tutor?.oficina} ?: 'Bloque 6, Of. 214'">Bloque 6, Of. 214</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Formación máxima</p><p class="text-sm font-medium text-slate-900">Maestría en Ing. de Sistemas</p></div>
+              <p th:if="${#lists.isEmpty(tutor.estudiantes)}" class="text-sm text-slate-400 text-center py-6">Aún no tienes estudiantes asignados.</p>
             </div>
           </div>
 
+          <!-- Datos institucionales -->
           <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <h2 class="font-semibold text-slate-900 font-display mb-4">Áreas de tutoría</h2>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs font-medium px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full">Ingeniería de Sistemas</span>
-              <span class="text-xs font-medium px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full">Seguridad Informática</span>
-              <span class="text-xs font-medium px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full">Desarrollo de Software</span>
-              <span class="text-xs font-medium px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full">Bases de Datos</span>
-              <span class="text-xs font-medium px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full">Redes y Comunicaciones</span>
-              <button type="button" id="btnAgregarArea" class="hidden text-xs font-medium px-3 py-1.5 border-2 border-dashed border-slate-300 text-slate-500 rounded-full hover:border-violet-400 hover:text-violet-600 transition-colors">
-                + Agregar área
-              </button>
+            <h2 class="font-semibold text-slate-900 font-display mb-4">Mis datos</h2>
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+              <div><p class="text-xs text-slate-500 mb-0.5">Correo</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.correo}">-</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Teléfono</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.telefono}">-</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Cargo</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.cargo}">-</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Departamento</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.departamento}">-</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Facultad</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.facultad}">-</p></div>
+              <div><p class="text-xs text-slate-500 mb-0.5">Formación máxima</p><p class="text-sm font-medium text-slate-900" th:text="${tutor.formacionMaxima}">-</p></div>
             </div>
+            <!-- OJO: TutorController no tiene endpoint de edición de perfil todavía -->
           </div>
         </div>
 
         <div class="space-y-4">
           <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-center">
-            <div class="w-20 h-20 rounded-full bg-violet-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">JH</div>
-            <p class="font-semibold text-slate-900">Prof. Javier Hernández Ruiz</p>
-            <p class="text-xs text-slate-500 mt-0.5">Docente titular · UST</p>
-            <p class="text-xs text-slate-500">Ing. de Sistemas</p>
-            <button type="button" class="mt-3 text-xs text-violet-700 border border-violet-200 rounded-lg px-3 py-1.5 hover:bg-violet-50 transition-colors">Cambiar foto</button>
-          </div>
-
-          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-            <p class="text-xs text-slate-500 font-medium mb-2">Actividad período 2026-II</p>
-            <div class="flex justify-between text-xs py-1 border-b border-slate-50"><span class="text-slate-500">Estudiantes asignados</span><span class="font-bold text-violet-700">5</span></div>
-            <div class="flex justify-between text-xs py-1 border-b border-slate-50"><span class="text-slate-500">Prácticas activas</span><span class="font-bold text-violet-700">2</span></div>
-            <div class="flex justify-between text-xs py-1"><span class="text-slate-500">Empresas vinculadas</span><span class="font-bold text-violet-700">4</span></div>
-          </div>
-
-          <div class="bg-violet-50 border border-violet-200 rounded-xl p-4">
-            <p class="text-xs font-semibold text-violet-900 mb-1">🎓 Formación</p>
-            <p class="text-xs text-violet-800">Ing. de Sistemas · Universidad Nacional</p>
-            <p class="text-xs text-violet-800 mt-1">Mg. Ing. de Sistemas · UIS</p>
-            <p class="text-xs text-violet-700 mt-1">12 años de experiencia docente</p>
+            <div class="w-16 h-16 rounded-full bg-violet-600 flex items-center justify-center text-white text-xl font-bold mx-auto mb-3"
+                 th:text="${#strings.substring(tutor.nombreCompleto,0,1)}">J</div>
+            <p class="font-bold text-slate-900" th:text="${tutor.nombreCompleto}">Tutor</p>
+            <p class="text-xs text-slate-500" th:text="${tutor.cargo}">Cargo</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<script th:src="@{/js/tutor.js}"></script>
 </body>
 </html>
