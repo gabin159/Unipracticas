@@ -1,4 +1,4 @@
-#CRUD de Productos (Spring Boot + PostgreSQL)
+# CRUD de Productos (Spring Boot + PostgreSQL)
 
 Sistema web CRUD (Create, Read, Update, Delete) para la gestión e inventario de productos. Permite registrar, listar, filtrar, editar y eliminar productos mediante una interfaz dinámica desarrollada con Java, Spring Boot y Thymeleaf.
 
