@@ -13,16 +13,24 @@ import com.unipracticas.demo.service.PracticaService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -99,9 +107,8 @@ public class EstudianteController {
             Model model) {
 
         Estudiante estudiante = estudianteService.listarTodos().stream()
-                .filter(e ->
-                        e.getCorreo().equalsIgnoreCase(correo)
-                                && e.getPassword().equals(password))
+                .filter(e -> e.getCorreo() != null && e.getCorreo().equalsIgnoreCase(correo)
+                        && e.getPassword() != null && e.getPassword().equals(password))
                 .findFirst()
                 .orElse(null);
 
@@ -129,45 +136,99 @@ public class EstudianteController {
     }
 
     /*
+     * Actualiza los datos personales del estudiante desde el modal o formulario de su panel.
+     */
+    @PostMapping("/perfil/actualizar")
+    public String actualizarPerfil(
+            @RequestParam("id") Long id,
+            @RequestParam("nombreCompleto") String nombreCompleto,
+            @RequestParam("correo") String correo,
+            @RequestParam("telefono") String telefono,
+            @RequestParam("ciudad") String ciudad,
+            @RequestParam("programaAcademico") String programaAcademico,
+            @RequestParam("semestre") Integer semestre) {
+
+        Estudiante estudiante = estudianteService.buscarPorId(id);
+
+        if (estudiante != null) {
+            estudiante.setNombreCompleto(nombreCompleto);
+            estudiante.setCorreo(correo);
+            estudiante.setTelefono(telefono);
+            estudiante.setCiudad(ciudad);
+            estudiante.setProgramaAcademico(programaAcademico);
+            estudiante.setSemestre(semestre);
+
+            estudianteService.guardar(estudiante);
+        }
+
+        return "redirect:/estudiante/perfil/" + id;
+    }
+
+    /*
      * Lista las prácticas disponibles y permite buscarlas.
+     * Identifica cuáles prácticas ya han sido postuladas por el estudiante actual.
      */
     @GetMapping("/practicas")
     public String practicas(
             @RequestParam(value = "buscar", required = false) String buscar,
+            @RequestParam(value = "estudianteId", required = false) Long estudianteId,
             Model model) {
 
-        List<Practica> practicas =
-                practicaService.buscar(buscar);
+        List<Practica> practicas = practicaService.buscar(buscar);
+
+        if (estudianteId != null) {
+            List<Postulacion> misPostulaciones = postulacionService.listarPorEstudiante(estudianteId);
+            List<Long> practicasPostuladasIds = misPostulaciones.stream()
+                    .map(p -> p.getPractica().getId())
+                    .toList();
+
+            model.addAttribute("practicasPostuladasIds", practicasPostuladasIds);
+        }
 
         model.addAttribute("practicas", practicas);
         model.addAttribute("buscar", buscar);
+        model.addAttribute("estudianteId", estudianteId);
 
         return "estudiante/practicas";
     }
 
     /*
      * Registra la postulación de un estudiante a una práctica.
-     * La postulación queda inicialmente en estado PENDIENTE.
+     * Incluye validación de unicidad para evitar duplicados en base de datos.
      */
     @PostMapping("/postular")
     public String postular(
             @RequestParam("estudianteId") Long estudianteId,
-            @RequestParam("practicaId") Long practicaId) {
+            @RequestParam("practicaId") Long practicaId,
+            RedirectAttributes redirectAttributes) {
 
-        Estudiante estudiante =
-                estudianteService.buscarPorId(estudianteId);
+        Estudiante estudiante = estudianteService.buscarPorId(estudianteId);
+        Practica practica = practicaService.buscarPorId(practicaId);
 
-        Practica practica =
-                practicaService.buscarPorId(practicaId);
+        // Validar si el estudiante ya posee una postulación a esta misma práctica
+        List<Postulacion> postulacionesExistentes = postulacionService.listarPorEstudiante(estudianteId);
+        boolean yaPostulado = postulacionesExistentes.stream()
+                .anyMatch(p -> p.getPractica() != null && p.getPractica().getId().equals(practicaId));
 
-        Postulacion postulacion = new Postulacion();
+        if (yaPostulado) {
+            redirectAttributes.addFlashAttribute("error", "Ya te encuentras postulado a esta práctica.");
+            return "redirect:/estudiante/practicas?estudianteId=" + estudianteId;
+        }
 
-        postulacion.setEstudiante(estudiante);
-        postulacion.setPractica(practica);
-        postulacion.setEstado("PENDIENTE");
-        postulacion.setFechaPostulacion(LocalDate.now());
+        try {
+            Postulacion postulacion = new Postulacion();
+            postulacion.setEstudiante(estudiante);
+            postulacion.setPractica(practica);
+            postulacion.setEstado("PENDIENTE");
+            postulacion.setFechaPostulacion(LocalDate.now());
 
-        postulacionService.guardar(postulacion);
+            postulacionService.guardar(postulacion);
+            redirectAttributes.addFlashAttribute("exito", "¡Te has postulado con éxito!");
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error", "Ya te encuentras postulado a esta práctica.");
+            return "redirect:/estudiante/practicas?estudianteId=" + estudianteId;
+        }
 
         return "redirect:/estudiante/postulaciones/" + estudianteId;
     }
@@ -239,6 +300,39 @@ public class EstudianteController {
     }
 
     /*
+     * Endpoint para descargar o visualizar directamente un documento (Hoja de Vida).
+     * Accesible tanto por la Empresa como por el Estudiante.
+     */
+    @GetMapping("/documentos/descargar/{id}")
+    @ResponseBody
+    public ResponseEntity<Resource> descargarDocumento(@PathVariable Long id) {
+        Documento documento = documentoService.listarTodos().stream()
+                .filter(d -> d.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (documento == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path path = Paths.get(documento.getRutaArchivo());
+            Resource resource = new UrlResource(path.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documento.getNombreArchivo() + "\"")
+                        .body(resource);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    /*
      * Permite subir evidencias de la práctica,
      * como fotografías y comentarios.
      */
@@ -289,8 +383,8 @@ public class EstudianteController {
     }
 
     /*
-     * Guarda un archivo en la carpeta correspondiente
-     * y devuelve la ruta donde quedó almacenado.
+     * Guarda un archivo en la carpeta correspondiente,
+     * normaliza separadores de ruta a '/' y devuelve la ruta.
      */
     private String guardarArchivoEnDisco(
             MultipartFile archivo,
@@ -308,11 +402,11 @@ public class EstudianteController {
                         + "_"
                         + archivo.getOriginalFilename();
 
-        Path destino =
-                Path.of(carpetaDestino, nombreFinal);
+        Path destino = Path.of(carpetaDestino, nombreFinal);
 
         Files.copy(archivo.getInputStream(), destino);
 
-        return destino.toString();
+        // Normalizar la ruta reemplazando separadores de Windows (\) por barras estándar (/)
+        return destino.toString().replace("\\", "/");
     }
 }

@@ -11,16 +11,8 @@
 <body>
 <div class="student-layout">
 
-  <!--
-    OJO: GET /estudiante/practicas no recibe estudianteId en el
-    controller (solo "buscar"). Lo leo del query param que yo mismo
-    agrego en los links (?estudianteId=...). Si entras a esta página
-    sin ese parámetro (ej. desde un link viejo), el botón "Postularme"
-    no va a saber de quién es la postulación. Lo ideal a futuro es que
-    el controller también reciba y reenvíe estudianteId al modelo.
-  -->
-  <div th:with="estudianteIdParam=${param.estudianteId}">
-    <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='practicas', estudianteId=${estudianteIdParam})}"></div>
+  <div th:with="idEstudiante=${estudianteId != null ? estudianteId : param.estudianteId}">
+    <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='practicas', estudianteId=${idEstudiante})}"></div>
   </div>
 
   <div class="student-content">
@@ -31,39 +23,84 @@
         <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' prácticas encontradas'">0 prácticas</p>
       </div>
 
-      <form th:action="@{/estudiante/practicas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3">
-        <input type="hidden" name="estudianteId" th:value="${param.estudianteId}">
+      <!-- Alerta de advertencia (Ya postulado o duplicado) -->
+      <div th:if="${error}" class="mb-5 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-base">⚠️</span>
+          <span class="font-medium" th:text="${error}">Ya te encuentras postulado a esta práctica.</span>
+        </div>
+      </div>
+
+      <!-- Alerta de éxito al postularse -->
+      <div th:if="${exito}" class="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-base">✅</span>
+          <span class="font-medium" th:text="${exito}">¡Te has postulado con éxito!</span>
+        </div>
+      </div>
+
+      <!-- Buscador -->
+      <form th:action="@{/estudiante/practicas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3 shadow-sm">
+        <input type="hidden" name="estudianteId" th:value="${estudianteId != null ? estudianteId : param.estudianteId}">
         <input name="buscar" th:value="${buscar}" placeholder="Buscar por título, empresa o área..."
                class="flex-1 text-sm border border-slate-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500">
-        <button type="submit" class="text-sm font-semibold text-white bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-800">Buscar</button>
+        <button type="submit" class="text-sm font-semibold text-white bg-blue-700 px-5 py-2 rounded-lg hover:bg-blue-800 transition-colors">Buscar</button>
       </form>
 
+      <!-- Grilla de Tarjetas -->
       <div class="grid grid-cols-2 gap-4">
-        <div th:each="p : ${practicas}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <div class="flex items-start gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <span class="text-white text-xs font-bold" th:text="${#strings.substring(p.empresa.nombreEmpresa,0,2)}">EM</span>
+        
+        <div th:each="p : ${practicas}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between hover:border-blue-300 transition-colors">
+          <div>
+            <!-- Cabecera de Tarjeta -->
+            <div class="flex items-start gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span class="text-white text-xs font-bold uppercase" th:text="${#strings.substring(p.empresa.nombreEmpresa,0,2)}">EM</span>
+              </div>
+              <div class="min-w-0">
+                <h3 class="font-semibold text-slate-900 text-sm leading-snug truncate" th:text="${p.titulo}">Título</h3>
+                <p class="text-slate-500 text-xs truncate" th:text="${p.empresa.nombreEmpresa}">Empresa</p>
+              </div>
             </div>
-            <div>
-              <h3 class="font-semibold text-slate-900 text-sm leading-snug" th:text="${p.titulo}">Título</h3>
-              <p class="text-slate-500 text-xs" th:text="${p.empresa.nombreEmpresa}">Empresa</p>
-            </div>
-          </div>
-          <div class="flex flex-wrap gap-1.5 mb-3">
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${p.area}">Área</span>
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.modalidad}">Modalidad</span>
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.duracion}">Duración</span>
-          </div>
-          <p class="text-xs text-slate-500 mb-3">📍 <span th:text="${p.ciudadUbicacion}">Ciudad</span> · <span th:text="${p.vacantes}">2</span> vacantes</p>
 
-          <form th:if="${param.estudianteId != null}" th:action="@{/estudiante/postular}" method="post" class="flex justify-end">
-            <input type="hidden" name="estudianteId" th:value="${param.estudianteId}">
-            <input type="hidden" name="practicaId" th:value="${p.id}">
-            <button type="submit" class="text-xs font-semibold text-white bg-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-800">Postularme</button>
-          </form>
+            <!-- Badges -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200" th:text="${p.area}">Área</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.modalidad}">Modalidad</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200" th:text="${p.duracion}">Duración</span>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-3">📍 <span th:text="${p.ciudadUbicacion}">Ciudad</span> · <span th:text="${p.vacantes}">2</span> vacantes</p>
+          </div>
+
+          <!-- Acciones / Botón Postularme o Ya Postulado -->
+          <div class="pt-3 border-t border-slate-100 flex justify-end">
+            
+            <!-- Opción A: Cuando YA está postulado -->
+            <div th:if="${practicasPostuladasIds != null && #lists.contains(practicasPostuladasIds, p.id)}">
+              <button disabled type="button" class="text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3.5 py-1.5 rounded-lg cursor-not-allowed flex items-center gap-1">
+                <span>✓</span> Ya postulado
+              </button>
+            </div>
+
+            <!-- Opción B: Cuando AÚN NO está postulado -->
+            <form th:unless="${practicasPostuladasIds != null && #lists.contains(practicasPostuladasIds, p.id)}" 
+                  th:action="@{/estudiante/postular}" method="post">
+              <input type="hidden" name="estudianteId" th:value="${estudianteId != null ? estudianteId : param.estudianteId}">
+              <input type="hidden" name="practicaId" th:value="${p.id}">
+              <button type="submit" class="text-xs font-semibold text-white bg-blue-700 px-4 py-1.5 rounded-lg hover:bg-blue-800 transition-colors shadow-sm">
+                Postularme
+              </button>
+            </form>
+
+          </div>
         </div>
 
-        <p th:if="${#lists.isEmpty(practicas)}" class="col-span-2 text-center text-sm text-slate-400 py-10">No hay prácticas que coincidan con tu búsqueda.</p>
+        <!-- Mensaje cuando la lista de búsqueda está vacía -->
+        <p th:if="${#lists.isEmpty(practicas)}" class="col-span-2 text-center text-sm text-slate-400 py-10">
+          No hay prácticas que coincidan con tu búsqueda.
+        </p>
+
       </div>
     </div>
   </div>

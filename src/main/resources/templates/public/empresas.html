@@ -1,59 +1,79 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prácticas Disponibles - UniPrácticas</title>
+  <title>Empresas con convenio - UniPrácticas</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
 
-  <div id="header-container"></div>
-
   <main class="max-w-6xl mx-auto px-6 py-8">
     <div class="mb-6">
-      <a href="index.html" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-700 font-medium mb-3 transition-colors">
+      <a th:href="@{/}" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-700 font-medium mb-3 transition-colors">
         ← Volver al inicio
       </a>
-      <h1 class="text-2xl font-bold text-slate-900">Prácticas disponibles</h1>
-      <p id="results-counter" class="text-slate-500 text-sm mt-1">Cargando resultados...</p>
+      <h1 class="text-2xl font-bold text-slate-900">Empresas con convenio</h1>
+      <p class="text-slate-500 text-sm mt-1" th:text="${empresas.size()} + ' empresas encontradas'">0 empresas encontradas</p>
     </div>
 
-    <!-- Filtros -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex flex-col md:flex-row items-center gap-4">
+    <!-- Buscador -->
+    <form th:action="@{/empresas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex flex-col md:flex-row items-center gap-4">
       <div class="flex-1 w-full">
-        <input id="input-search" type="text" placeholder="Buscar por nombre, empresa o área..." class="w-full text-sm border border-slate-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+        <input name="buscar" th:value="${buscar}" type="text" placeholder="Buscar por nombre, empresa o sector..." class="w-full text-sm border border-slate-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500">
       </div>
-      <div class="flex items-center gap-2 w-full md:w-auto">
-        <span class="text-xs text-slate-500 font-medium">Área:</span>
-        <select id="select-area" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 w-full">
-          <option value="Todas">Todas</option>
-        </select>
-      </div>
-      <div class="flex items-center gap-2 w-full md:w-auto">
-        <span class="text-xs text-slate-500 font-medium">Modalidad:</span>
-        <select id="select-modalidad" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 w-full">
-          <option value="Todas">Todas</option>
-          <option value="Presencial">Presencial</option>
-          <option value="Híbrida">Híbrida</option>
-          <option value="Remota">Remota</option>
-        </select>
-      </div>
-    </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors w-full md:w-auto">
+        Buscar
+      </button>
+    </form>
 
-    <!-- Grilla de Tarjetas -->
-    <div id="practices-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Se inyecta dinámicamente con JS -->
+    <!-- Grilla de Tarjetas Medianas Elegantes (4 columnas en pantallas grandes) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      
+      <!-- Mensaje cuando no hay empresas -->
+      <div th:if="${#lists.isEmpty(empresas)}" class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200">
+        <p class="text-slate-500">No se encontraron empresas registradas con ese criterio.</p>
+      </div>
+
+      <!-- Tarjeta de Empresa -->
+      <a th:each="empresa : ${empresas}" 
+         th:href="@{'/empresas/' + ${empresa.id}}" 
+         class="group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+        
+        <div>
+          <!-- Cabecera con Badge de Iniciales y Sector -->
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="w-9 h-9 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center uppercase group-hover:bg-blue-600 group-hover:text-white transition-colors"
+                  th:text="${#strings.substring(empresa.nombreEmpresa, 0, 2)}">
+              EP
+            </span>
+            <span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full truncate max-w-[120px]" 
+                  th:text="${empresa.sector != null ? empresa.sector : 'General'}">
+              Sector
+            </span>
+          </div>
+
+          <!-- Nombre de la Empresa -->
+          <h2 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight mb-2 line-clamp-1" 
+              th:text="${empresa.nombreEmpresa}">
+            Nombre de Empresa
+          </h2>
+        </div>
+
+        <!-- Ubicación / Dirección al pie -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-2">
+          <div class="flex items-center gap-1 min-w-0">
+            <span class="text-blue-600">📍</span>
+            <span class="truncate text-[11px]" th:text="${empresa.direccion != null ? empresa.direccion : 'Sede principal'}">
+              Dirección
+            </span>
+          </div>
+        </div>
+
+      </a>
+
     </div>
   </main>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      loadFragment('../fragments/header.html', 'header-container');
-      initPracticesList();
-    });
-  </script>
 </body>
 </html>

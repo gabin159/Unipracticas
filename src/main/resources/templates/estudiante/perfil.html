@@ -22,7 +22,7 @@
         <p class="text-slate-500 text-sm mt-1">Este es tu panel de UniPrácticas</p>
       </div>
 
-      <!-- Estado de la práctica: usa la relación estudiante.practica (nula si aún no tiene) -->
+      <!-- Estado de la práctica -->
       <div th:if="${estudiante.practica != null}" class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 mb-6 text-white shadow-lg">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0"><span class="text-3xl">🎉</span></div>
@@ -51,22 +51,80 @@
       <div class="grid grid-cols-3 gap-4">
         <div class="col-span-2 space-y-4">
 
-          <!-- Datos personales -->
+          <!-- Sección Datos Personales con Edición Integrada -->
           <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <h2 class="font-semibold text-slate-900 font-display mb-4">Datos personales</h2>
-            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-              <div><p class="text-xs text-slate-500 mb-0.5">Nombre completo</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.nombreCompleto}">-</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Correo</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.correo}">-</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Teléfono</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.telefono}">-</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Ciudad</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.ciudad}">-</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Programa</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.programaAcademico}">-</p></div>
-              <div><p class="text-xs text-slate-500 mb-0.5">Semestre</p><p class="text-sm font-medium text-slate-900" th:text="${estudiante.semestre}">-</p></div>
-            </div>
-            <!--
-              OJO: no hay endpoint POST para actualizar el perfil del
-              estudiante todavía en EstudianteController. Pídanle que
-              agregue uno cuando quieran habilitar edición aquí.
-            -->
+            
+            <form id="form-perfil" th:action="@{/estudiante/perfil/actualizar}" method="post">
+              <input type="hidden" name="id" th:value="${estudiante.id}">
+
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-slate-900 font-display">Datos personales</h2>
+                
+                <!-- Botón de Modificación en la tarjeta -->
+                <button type="button" id="btn-editar" onclick="modoEdicion(true)" class="text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1">
+                  ✏️ Editar perfil
+                </button>
+              </div>
+
+              <!-- Vista Modo Lectura / Modo Edición en la misma tarjeta -->
+              <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                
+                <!-- Nombre completo -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Nombre completo</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.nombreCompleto}">-</p>
+                  <input type="text" name="nombreCompleto" th:value="${estudiante.nombreCompleto}" required class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Correo -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Correo</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.correo}">-</p>
+                  <input type="email" name="correo" th:value="${estudiante.correo}" required class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Teléfono -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Teléfono</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.telefono}">-</p>
+                  <input type="text" name="telefono" th:value="${estudiante.telefono}" required class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Ciudad -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Ciudad</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.ciudad}">-</p>
+                  <input type="text" name="ciudad" th:value="${estudiante.ciudad}" class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Programa -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Programa</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.programaAcademico}">-</p>
+                  <input type="text" name="programaAcademico" th:value="${estudiante.programaAcademico}" class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Semestre -->
+                <div>
+                  <p class="text-xs text-slate-500 mb-0.5">Semestre</p>
+                  <p class="text-sm font-medium text-slate-900 campo-lectura" th:text="${estudiante.semestre}">-</p>
+                  <input type="number" name="semestre" th:value="${estudiante.semestre}" min="1" max="12" class="campo-edicion hidden w-full text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+              </div>
+
+              <!-- Botones de Acción (Ocultos inicialmente) -->
+              <div id="contenedor-acciones" class="hidden flex items-center justify-end gap-2 mt-6 pt-4 border-t border-slate-100">
+                <button type="button" onclick="modoEdicion(false)" class="text-xs font-semibold text-slate-600 hover:text-slate-800 px-3 py-1.5">
+                  Cancelar
+                </button>
+                <button type="submit" class="text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 px-4 py-1.5 rounded-lg transition-colors">
+                  Guardar cambios
+                </button>
+              </div>
+
+            </form>
+
           </div>
 
           <!-- Accesos rápidos -->
@@ -110,5 +168,27 @@
     </div>
   </div>
 </div>
+
+<script>
+  function modoEdicion(activar) {
+    const lecturas = document.querySelectorAll('.campo-lectura');
+    const ediciones = document.querySelectorAll('.campo-edicion');
+    const btnEditar = document.getElementById('btn-editar');
+    const acciones = document.getElementById('contenedor-acciones');
+
+    if (activar) {
+      lecturas.forEach(el => el.classList.add('hidden'));
+      ediciones.forEach(el => el.classList.remove('hidden'));
+      btnEditar.classList.add('hidden');
+      acciones.classList.remove('hidden');
+    } else {
+      lecturas.forEach(el => el.classList.remove('hidden'));
+      ediciones.forEach(el => el.classList.add('hidden'));
+      btnEditar.classList.remove('hidden');
+      acciones.classList.add('hidden');
+    }
+  }
+</script>
+
 </body>
 </html>
