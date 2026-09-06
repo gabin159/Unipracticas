@@ -11,26 +11,27 @@
 <body>
 <div class="student-layout">
 
-  <!-- Tampoco viene estudianteId al modelo aquí; lo tomo del primer registro de la lista si existe -->
   <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='postulaciones', estudianteId=${estudianteId})}"></div>
 
   <div class="student-content">
     <div class="p-7">
       <div class="mb-6">
         <h1 class="text-2xl font-bold font-display text-slate-900">Mis postulaciones</h1>
-        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(postulaciones)} + ' postulaciones'">0</p>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(postulaciones)} + ' postulaciones en total'">0</p>
       </div>
 
       <div class="space-y-3">
         <div th:each="p : ${postulaciones}" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-slate-900" th:text="${p.practica.titulo}">Título</p>
-            <p class="text-xs text-slate-500" th:text="${p.practica.empresa.nombreEmpresa} + ' · ' + ${p.fechaPostulacion}">Empresa · Fecha</p>
+            <p class="text-sm font-bold text-slate-900" th:text="${p.practica.titulo}">Título</p>
+            <p class="text-xs text-slate-500 mt-0.5" th:text="${p.practica.empresa.nombreEmpresa} + ' · Postulado el ' + ${p.fechaPostulacion}">Empresa · Fecha</p>
           </div>
-          <span class="text-xs font-medium px-2 py-0.5 rounded-full border"
+
+          <span class="text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-wider"
                 th:classappend="${p.estado == 'ACEPTADA'} ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (${p.estado == 'RECHAZADA'} ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200')"
-                th:text="${p.estado}">Pendiente</span>
+                th:text="${p.estado}">PENDIENTE</span>
         </div>
+
         <p th:if="${#lists.isEmpty(postulaciones)}" class="text-center text-sm text-slate-400 py-10">Todavía no te has postulado a ninguna práctica.</p>
       </div>
     </div>

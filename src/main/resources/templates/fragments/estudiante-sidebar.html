@@ -1,65 +1,67 @@
-<!--
-  fragments/estudiante-sidebar.html
-  Se inserta así: <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='perfil', estudianteId=${estudiante.id})}"></div>
--->
 <div th:fragment="sidebar(activePage, estudianteId)"
-     class="w-52 bg-slate-900 text-white flex flex-col flex-shrink-0 min-h-screen">
+     class="w-56 bg-slate-900 text-white flex flex-col flex-shrink-0 h-screen sticky top-0 border-r border-slate-800">
 
-  <div class="p-4 border-b border-slate-700">
-    <div class="flex items-center gap-2">
-      <div class="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
-        <span class="text-white text-xs font-bold">UP</span>
+  <!-- Header Sidebar -->
+  <div class="p-4 border-b border-slate-800 flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-sm">
+        UP
       </div>
-      <div>
-        <p class="font-semibold text-sm font-display">UniPrácticas</p>
-        <p class="text-xs text-slate-400">UST</p>
+      <div class="min-w-0">
+        <p class="font-bold text-sm font-display text-white tracking-wide truncate">UniPrácticas</p>
+        <p class="text-[11px] text-slate-400 truncate">Portal Estudiante · UST</p>
       </div>
     </div>
   </div>
 
-  <nav class="flex-1 p-2 space-y-0.5">
+  <!-- Navegación con Scroll Interno -->
+  <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
 
     <a th:href="@{/estudiante/perfil/{id}(id=${estudianteId})}"
-       th:classappend="${activePage == 'perfil'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">⊞</span><span>Mi panel / perfil</span>
+       th:classappend="${activePage == 'perfil'} ? 'bg-blue-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'"
+       class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all">
+      <span class="text-sm">⊞</span><span>Mi panel / perfil</span>
     </a>
 
     <a th:href="@{/estudiante/practicas(estudianteId=${estudianteId})}"
-       th:classappend="${activePage == 'practicas'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">🔍</span><span>Buscar prácticas</span>
+       th:classappend="${activePage == 'practicas'} ? 'bg-blue-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'"
+       class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all">
+      <span class="text-sm">🔍</span><span>Buscar prácticas</span>
     </a>
 
     <a th:href="@{/estudiante/postulaciones/{id}(id=${estudianteId})}"
-       th:classappend="${activePage == 'postulaciones'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">📄</span><span>Mis postulaciones</span>
+       th:classappend="${activePage == 'postulaciones'} ? 'bg-blue-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'"
+       class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all">
+      <span class="text-sm">📄</span><span>Mis postulaciones</span>
     </a>
 
     <a th:href="@{/estudiante/documentos/{id}(id=${estudianteId})}"
-       th:classappend="${activePage == 'documentos'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">📁</span><span>Documentos</span>
+       th:classappend="${activePage == 'documentos'} ? 'bg-blue-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'"
+       class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all">
+      <span class="text-sm">📁</span><span>Documentos</span>
     </a>
 
     <a th:href="@{/estudiante/evidencias/{id}(id=${estudianteId})}"
-       th:classappend="${activePage == 'evidencias'} ? 'is-active' : ''"
-       class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
-      <span class="text-base">📸</span><span>Evidencias</span>
+       th:classappend="${activePage == 'evidencias'} ? 'bg-blue-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'"
+       class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all">
+      <span class="text-sm">📸</span><span>Evidencias</span>
     </a>
 
   </nav>
-<div class="p-3 border-t border-slate-700">
-<a th:href="@{/}"
-   onclick="return confirm('¿Estás seguro de que deseas cerrar la sesión?');"
-   class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-red-500/10 hover:text-red-400">
-  <span class="text-base">🚪</span>
-  <span>Cerrar sesión</span>
-</a>
-</div>
-  <div class="p-3 border-t border-slate-700">
-    <p class="text-xs text-slate-400">Sesión de estudiante</p>
+
+  <!-- Footer Unificado Sidebar -->
+  <div class="p-3 border-t border-slate-800 bg-slate-900/50 flex-shrink-0 space-y-2">
+    <a th:href="@{/}"
+       onclick="return confirm('¿Estás seguro de que deseas cerrar la sesión?');"
+       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:bg-red-500/10 hover:text-red-400 border border-transparent hover:border-red-500/20">
+      <span class="text-sm">🚪</span>
+      <span>Cerrar sesión</span>
+    </a>
+
+    <div class="px-3 pt-1 flex items-center justify-between text-[10px] text-slate-500">
+      <span>Sesión de estudiante</span>
+      <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+    </div>
   </div>
 
 </div>

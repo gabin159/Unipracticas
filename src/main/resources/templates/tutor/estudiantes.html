@@ -15,9 +15,10 @@
 
   <div class="tutor-content">
     <div class="p-7">
+      
       <div class="mb-6">
         <h1 class="text-2xl font-bold font-display text-slate-900">Mis estudiantes</h1>
-        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(estudiantes)} + ' estudiantes asignados'">0</p>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(estudiantes)} + ' estudiantes bajo supervisión'">0 estudiantes</p>
       </div>
 
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -25,35 +26,165 @@
           <thead>
             <tr class="bg-slate-50 border-b border-slate-100">
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estudiante</th>
-              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Programa</th>
-              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Sem.</th>
-              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Práctica / Empresa</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Programa / Sem.</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Empresa / Práctica</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Informes y Evidencias</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="e : ${estudiantes}" class="border-b border-slate-100 hover:bg-slate-50">
+            <tr th:each="e : ${estudiantes}" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              
+              <!-- Datos del Estudiante -->
               <td class="px-4 py-3">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0"
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold flex-shrink-0"
                        th:text="${#strings.substring(e.nombreCompleto,0,1)}">M</div>
-                  <span class="text-sm font-medium text-slate-900" th:text="${e.nombreCompleto}">Nombre</span>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" th:text="${e.nombreCompleto}">Nombre</p>
+                    <p class="text-xs text-slate-400" th:text="${e.correo}">correo@ejemplo.com</p>
+                  </div>
                 </div>
               </td>
-              <td class="px-4 py-3 text-xs text-slate-600" th:text="${e.programaAcademico}">Programa</td>
-              <td class="px-4 py-3 text-sm text-slate-600" th:text="${e.semestre}">9</td>
-              <td class="px-4 py-3">
-                <span th:if="${e.practica != null}" th:text="${e.practica.titulo} + ' · ' + ${e.empresa.nombreEmpresa}" class="text-xs text-slate-700">Práctica</span>
-                <span th:if="${e.practica == null}" class="text-xs text-slate-400">Sin práctica</span>
+
+              <!-- Programa y Semestre -->
+              <td class="px-4 py-3 text-xs text-slate-600">
+                <p class="font-medium text-slate-800" th:text="${e.programaAcademico}">Programa</p>
+                <p class="text-slate-400" th:text="'Semestre ' + ${e.semestre}">Semestre</p>
               </td>
+
+              <!-- Práctica y Empresa -->
+              <td class="px-4 py-3">
+                <div th:if="${e.practica != null}">
+                  <p class="text-xs font-semibold text-slate-900" th:text="${e.practica.titulo}">Título de la práctica</p>
+                  <p class="text-xs text-emerald-700 font-medium" th:text="${e.empresa != null ? e.empresa.nombreEmpresa : e.practica.empresa.nombreEmpresa}">Nombre Empresa</p>
+                </div>
+                <span th:unless="${e.practica != null}" class="text-xs text-slate-400 italic">Sin práctica asignada</span>
+              </td>
+
+              <!-- Resumen de Entregables (Documentos e Evidencias) -->
+              <td class="px-4 py-3 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md font-semibold">
+                    📁 <span th:text="${e.documentos != null ? #lists.size(e.documentos) : 0}">0</span> Informes
+                  </span>
+                  <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-md font-semibold">
+                    📷 <span th:text="${e.evidencias != null ? #lists.size(e.evidencias) : 0}">0</span> Evidencias
+                  </span>
+                </div>
+              </td>
+
+              <!-- Botón para ver Entregables -->
+              <td class="px-4 py-3 text-center">
+                <button type="button" th:onclick="'abrirModalEntregables(' + ${e.id} + ')'"
+                        class="text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 px-3 py-1.5 rounded-lg transition-colors">
+                  🔍 Ver entregables
+                </button>
+              </td>
+
             </tr>
+
+            <!-- Estado Vacío -->
             <tr th:if="${#lists.isEmpty(estudiantes)}">
-              <td colspan="4" class="text-center text-sm text-slate-400 py-8">No tienes estudiantes asignados todavía.</td>
+              <td colspan="5" class="text-center text-sm text-slate-400 py-10">No tienes estudiantes asignados todavía.</td>
             </tr>
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>
+
+<!-- Modales de Entregables por Estudiante -->
+<div th:each="e : ${estudiantes}" th:id="'modal-entregables-' + ${e.id}" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
+    
+    <!-- Encabezado del Modal -->
+    <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+      <div>
+        <h3 class="font-bold text-slate-900 text-base" th:text="'Entregables de ' + ${e.nombreCompleto}">Entregables</h3>
+        <p class="text-xs text-slate-500">Documentos e informes de la práctica técnica</p>
+      </div>
+      <button type="button" th:onclick="'cerrarModalEntregables(' + ${e.id} + ')'" class="text-slate-400 hover:text-slate-600 font-bold text-lg px-2">✕</button>
+    </div>
+
+    <!-- Cuerpo del Modal -->
+    <div class="p-6 overflow-y-auto space-y-6 flex-1">
+      
+      <!-- Sección A: Documentos e Informes -->
+      <div>
+        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          📁 Documentos e Informes Académicos
+        </h4>
+        <div class="space-y-2">
+          <div th:each="doc : ${e.documentos}" class="flex items-center justify-between p-3 border border-slate-100 rounded-xl bg-slate-50">
+            <div>
+              <p class="text-xs font-semibold text-slate-800" th:text="${doc.tipoDocumento}">Tipo Documento</p>
+              <p class="text-xs text-slate-500" th:text="${doc.nombreArchivo} + ' · Subido el ' + ${doc.fechaSubida}">archivo.pdf</p>
+            </div>
+            <a th:href="@{/estudiante/documentos/descargar/{id}(id=${doc.id})}" target="_blank"
+               class="text-xs font-semibold text-blue-700 bg-white border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-1">
+              📥 Descargar
+            </a>
+          </div>
+          <p th:if="${e.documentos == null || #lists.isEmpty(e.documentos)}" class="text-xs text-slate-400 italic py-2">El estudiante aún no ha cargado informes.</p>
+        </div>
+      </div>
+
+      <hr class="border-slate-100">
+
+      <!-- Sección B: Evidencias de Práctica -->
+      <div>
+        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          📷 Evidencias de Campo / Fotos
+        </h4>
+        <div class="space-y-3">
+          <div th:each="ev : ${e.evidencias}" class="p-3 border border-slate-100 rounded-xl bg-slate-50">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-900" th:text="${ev.titulo}">Título de Evidencia</p>
+                <p class="text-xs text-slate-600 mt-0.5" th:text="${ev.descripcion}">Descripción del avance...</p>
+                <p class="text-[10px] text-slate-400 mt-1" th:text="'Fecha: ' + ${ev.fechaSubida}">Fecha</p>
+              </div>
+              <a th:href="@{/tutor/evidencias/descargar/{id}(id=${ev.id})}" target="_blank"
+                 class="text-xs font-semibold text-amber-700 bg-white border border-amber-200 px-2.5 py-1 rounded-lg hover:bg-amber-50 transition-colors">
+                📥 Descargar Foto
+              </a>
+            </div>
+          </div>
+          <p th:if="${e.evidencias == null || #lists.isEmpty(e.evidencias)}" class="text-xs text-slate-400 italic py-2">El estudiante aún no ha cargado evidencias fotográficas.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pie del Modal -->
+    <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+      <button type="button" th:onclick="'cerrarModalEntregables(' + ${e.id} + ')'" class="text-xs font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg transition-colors">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function abrirModalEntregables(id) {
+    const modal = document.getElementById('modal-entregables-' + id);
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  function cerrarModalEntregables(id) {
+    const modal = document.getElementById('modal-entregables-' + id);
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+</script>
 </body>
 </html>

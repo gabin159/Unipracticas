@@ -8,7 +8,7 @@
   <link rel="stylesheet" th:href="@{/css/global.css}">
   <link rel="stylesheet" th:href="@{/css/tutor.css}">
 </head>
-<body>
+<body class="bg-slate-50">
 <div class="tutor-layout">
 
   <div th:with="tutorIdParam=${param.tutorId}">
@@ -16,60 +16,154 @@
   </div>
 
   <div class="tutor-content">
-    <div class="p-7" style="max-width:560px">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold font-display text-slate-900">Registrar empresa</h1>
-        <p class="text-slate-500 text-sm mt-1">Crea el acceso para que la empresa pueda ingresar al sistema</p>
+    <div class="p-8 max-w-4xl mx-auto">
+      
+      <!-- Header -->
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold font-display text-slate-900">Registrar nueva empresa</h1>
+          <p class="text-slate-500 text-sm mt-1">Habilita el acceso para organizaciones con o sin convenio previo</p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-100 text-violet-700 border border-violet-200">
+          🏢 Registro institucional
+        </span>
       </div>
 
-      <form th:action="@{/tutor/empresas/guardar}" th:object="${empresa}" method="post" class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <!-- Formulario principal -->
+      <form th:action="@{/tutor/empresas/guardar(tutorId=${tutorId})}" th:object="${empresa}" method="post" enctype="multipart/form-data" 
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-8">
+        
+        <!-- Sección 1: Información Corporativa -->
         <div>
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Nombre de la empresa *</label>
-          <input th:field="*{nombreEmpresa}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs font-medium text-slate-700 mb-1 block">NIT *</label>
-            <input th:field="*{nit}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+          <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+            <span class="text-lg">🏛️</span>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Información Corporativa</h2>
           </div>
-          <div>
-            <label class="text-xs font-medium text-slate-700 mb-1 block">Sector</label>
-            <input th:field="*{sector}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
-          </div>
-        </div>
-        <div>
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Nombre de contacto *</label>
-          <input th:field="*{nombreContacto}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
+
+          <div class="grid grid-cols-2 gap-5">
+            <div class="col-span-2">
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Razón Social / Nombre de la empresa *</label>
+              <input th:field="*{nombreEmpresa}" required placeholder="Ej: Tech Solutions S.A.S." 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all">
+            </div>
+
             <div>
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Dirección</label>
-          <input th:field="*{direccion}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
-        </div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">NIT o Identificación Tributaria *</label>
+              <input th:field="*{nit}" required placeholder="900123456-1" 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all">
+            </div>
 
-          <div>
-            <label class="text-xs font-medium text-slate-700 mb-1 block">Teléfono</label>
-            <input th:field="*{telefono}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Sector / Industria</label>
+              <select th:field="*{sector}" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 bg-white transition-all">
+                <option value="Tecnología e Informática">Tecnología e Informática</option>
+                <option value="Servicios Financieros">Servicios Financieros</option>
+                <option value="Industrial / Manufactura">Industrial / Manufactura</option>
+                <option value="Salud y Biotecnología">Salud y Biotecnología</option>
+                <option value="Educación">Educación</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Dirección principal</label>
+              <input th:field="*{direccion}" placeholder="Calle 123 # 45 - 67" 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 transition-all">
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Teléfono de contacto</label>
+              <input th:field="*{telefono}" placeholder="+57 (608) 1234567" 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 transition-all">
+            </div>
           </div>
         </div>
-      
-         <div>
-            <label class="text-xs font-medium text-slate-700 mb-1 block">Correo *</label>
-            <input type="email" th:field="*{correo}" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500">
-          </div>
 
+        <!-- Sección 2: Datos de Contacto y Credenciales -->
         <div>
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Contraseña de acceso *</label>
-          <input type="password" th:field="*{password}" required minlength="8" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
-                 placeholder="Se la compartes tú a la empresa">
+          <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+            <span class="text-lg">🔑</span>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Acceso a la Plataforma</h2>
+          </div>
+
+          <div class="grid grid-cols-2 gap-5">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Nombre del encargado / Encargado RRHH *</label>
+              <input th:field="*{nombreContacto}" required placeholder="Ej: Dra. María Fernanda Pérez" 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 transition-all">
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Correo corporativo *</label>
+              <input type="email" th:field="*{correo}" required placeholder="contacto@empresa.com" 
+                     class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 transition-all">
+            </div>
+
+            <!-- Campo Contraseña con Ojo y Generador -->
+            <div class="col-span-2">
+              <label class="text-xs font-semibold text-slate-700 mb-1 block">Contraseña de acceso temporal *</label>
+              <div class="relative flex items-center gap-2">
+                <div class="relative flex-1">
+                  <input type="password" id="passwordInput" th:field="*{password}" required minlength="8" 
+                         placeholder="Genera o escribe una contraseña temporal" 
+                         class="w-full border border-slate-200 rounded-xl pl-3.5 pr-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 transition-all font-mono">
+                  <button type="button" onclick="togglePassword('passwordInput', 'iconEmpresa')" 
+                          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm p-1">
+                    <span id="iconEmpresa">👁️</span>
+                  </button>
+                </div>
+                <button type="button" onclick="generarPassword()" 
+                        class="text-xs font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-3.5 py-2.5 rounded-xl transition-colors flex-shrink-0">
+                  ⚡ Generar
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">Comparte estas credenciales con el encargado de la empresa para su primer ingreso.</p>
+            </div>
+          </div>
         </div>
 
-        <button type="submit" class="w-full bg-violet-700 text-white font-semibold text-sm py-2.5 rounded-xl hover:bg-violet-800">
-          Registrar empresa
-        </button>
+        <!-- Botones de Acción -->
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <a th:href="@{/tutor/empresas(tutorId=${tutorId})}" class="text-xs font-semibold text-slate-600 hover:text-slate-800 px-5 py-2.5 rounded-xl transition-colors">
+            Cancelar
+          </a>
+          <button type="submit" class="text-xs font-semibold text-white bg-violet-700 hover:bg-violet-800 px-6 py-2.5 rounded-xl shadow-sm transition-colors flex items-center gap-2">
+            <span>💾 Registrar y Habilitar Acceso</span>
+          </button>
+        </div>
+
       </form>
     </div>
   </div>
 </div>
+
+<script>
+  function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      icon.textContent = '👁️';
+    }
+  }
+
+  function generarPassword() {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+    let pass = '';
+    for (let i = 0; i < 10; i++) {
+      pass += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    const input = document.getElementById('passwordInput');
+    input.value = pass;
+    
+    // Si la contraseña estaba oculta, la muestra para que el tutor pueda copiarla/verla al generar
+    input.type = 'text';
+    document.getElementById('iconEmpresa').textContent = '🙈';
+  }
+</script>
+
 </body>
 </html>

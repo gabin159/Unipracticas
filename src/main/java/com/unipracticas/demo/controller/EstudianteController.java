@@ -5,11 +5,13 @@ import com.unipracticas.demo.model.Estudiante;
 import com.unipracticas.demo.model.Evidencia;
 import com.unipracticas.demo.model.Postulacion;
 import com.unipracticas.demo.model.Practica;
+import com.unipracticas.demo.model.Tutor;
 import com.unipracticas.demo.service.DocumentoService;
 import com.unipracticas.demo.service.EstudianteService;
 import com.unipracticas.demo.service.EvidenciaService;
 import com.unipracticas.demo.service.PostulacionService;
 import com.unipracticas.demo.service.PracticaService;
+import com.unipracticas.demo.service.TutorService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -53,9 +56,11 @@ public class EstudianteController {
     @Autowired
     private EvidenciaService evidenciaService;
 
+    @Autowired
+    private TutorService tutorService;
+
     /*
-     * Carpeta donde se almacenarán los documentos y evidencias
-     * que suban los estudiantes.
+     * Carpeta base donde se almacenarán los documentos y evidencias.
      */
     private final String CARPETA_UPLOADS = "uploads/estudiantes/";
 
@@ -64,9 +69,7 @@ public class EstudianteController {
      */
     @GetMapping("/registro")
     public String formularioRegistro(Model model) {
-
         model.addAttribute("estudiante", new Estudiante());
-
         return "estudiante/registro";
     }
 
@@ -83,7 +86,6 @@ public class EstudianteController {
         }
 
         estudianteService.guardar(estudiante);
-
         return "redirect:/estudiante/login";
     }
 
@@ -92,13 +94,11 @@ public class EstudianteController {
      */
     @GetMapping("/login")
     public String formularioLogin() {
-
         return "estudiante/login";
     }
 
     /*
-     * Inicia sesión validando el correo y la contraseña
-     * registrados por el estudiante.
+     * Inicia sesión validando las credenciales del estudiante.
      */
     @PostMapping("/login")
     public String login(
@@ -121,7 +121,7 @@ public class EstudianteController {
     }
 
     /*
-     * Muestra el perfil del estudiante.
+     * Muestra el perfil del estudiante junto con la lista completa de docentes/tutores.
      */
     @GetMapping("/perfil/{id}")
     public String perfil(
@@ -130,13 +130,20 @@ public class EstudianteController {
 
         Estudiante estudiante = estudianteService.buscarPorId(id);
 
+        if (estudiante == null) {
+            return "redirect:/estudiante/login";
+        }
+
+        List<Tutor> tutores = tutorService.listarTodos();
+
         model.addAttribute("estudiante", estudiante);
+        model.addAttribute("tutores", tutores);
 
         return "estudiante/perfil";
     }
 
     /*
-     * Actualiza los datos personales del estudiante desde el modal o formulario de su panel.
+     * Actualiza los datos personales del estudiante desde el panel.
      */
     @PostMapping("/perfil/actualizar")
     public String actualizarPerfil(
@@ -165,8 +172,7 @@ public class EstudianteController {
     }
 
     /*
-     * Lista las prácticas disponibles y permite buscarlas.
-     * Identifica cuáles prácticas ya han sido postuladas por el estudiante actual.
+     * Lista las prácticas disponibles y evalúa si el estudiante ya posee una vinculación ACEPTADA.
      */
     @GetMapping("/practicas")
     public String practicas(
@@ -175,12 +181,18 @@ public class EstudianteController {
             Model model) {
 
         List<Practica> practicas = practicaService.buscar(buscar);
+        boolean tienePracticaAceptada = false;
 
         if (estudianteId != null) {
             List<Postulacion> misPostulaciones = postulacionService.listarPorEstudiante(estudianteId);
+            
             List<Long> practicasPostuladasIds = misPostulaciones.stream()
                     .map(p -> p.getPractica().getId())
                     .toList();
+
+            // Evaluar si alguna postulación del estudiante ya fue ACEPTADA
+            tienePracticaAceptada = misPostulaciones.stream()
+                    .anyMatch(p -> "ACEPTADA".equalsIgnoreCase(p.getEstado()));
 
             model.addAttribute("practicasPostuladasIds", practicasPostuladasIds);
         }
@@ -188,13 +200,14 @@ public class EstudianteController {
         model.addAttribute("practicas", practicas);
         model.addAttribute("buscar", buscar);
         model.addAttribute("estudianteId", estudianteId);
+        model.addAttribute("tienePracticaAceptada", tienePracticaAceptada);
 
         return "estudiante/practicas";
     }
 
     /*
-     * Registra la postulación de un estudiante a una práctica.
-     * Incluye validación de unicidad para evitar duplicados en base de datos.
+     * Registra la postulación del estudiante a una práctica.
+     * Valida que no posea una postulación ACEPTADA previamente ni duplicados a la misma vacante.
      */
     @PostMapping("/postular")
     public String postular(
@@ -202,11 +215,18 @@ public class EstudianteController {
             @RequestParam("practicaId") Long practicaId,
             RedirectAttributes redirectAttributes) {
 
-        Estudiante estudiante = estudianteService.buscarPorId(estudianteId);
-        Practica practica = practicaService.buscarPorId(practicaId);
-
-        // Validar si el estudiante ya posee una postulación a esta misma práctica
         List<Postulacion> postulacionesExistentes = postulacionService.listarPorEstudiante(estudianteId);
+
+        // 1. Bloqueo de postulaciones si el estudiante ya fue aceptado por alguna empresa
+        boolean tieneAceptada = postulacionesExistentes.stream()
+                .anyMatch(p -> "ACEPTADA".equalsIgnoreCase(p.getEstado()));
+
+        if (tieneAceptada) {
+            redirectAttributes.addFlashAttribute("error", "Ya te encuentras vinculado a una empresa. No puedes realizar nuevas postulaciones.");
+            return "redirect:/estudiante/practicas?estudianteId=" + estudianteId;
+        }
+
+        // 2. Validación de duplicidad sobre la misma práctica
         boolean yaPostulado = postulacionesExistentes.stream()
                 .anyMatch(p -> p.getPractica() != null && p.getPractica().getId().equals(practicaId));
 
@@ -216,6 +236,9 @@ public class EstudianteController {
         }
 
         try {
+            Estudiante estudiante = estudianteService.buscarPorId(estudianteId);
+            Practica practica = practicaService.buscarPorId(practicaId);
+
             Postulacion postulacion = new Postulacion();
             postulacion.setEstudiante(estudiante);
             postulacion.setPractica(practica);
@@ -241,8 +264,7 @@ public class EstudianteController {
             @PathVariable Long estudianteId,
             Model model) {
 
-        List<Postulacion> postulaciones =
-                postulacionService.listarPorEstudiante(estudianteId);
+        List<Postulacion> postulaciones = postulacionService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("postulaciones", postulaciones);
         model.addAttribute("estudianteId", estudianteId);
@@ -251,8 +273,8 @@ public class EstudianteController {
     }
 
     /*
-     * Permite subir documentos como hoja de vida,
-     * formatos o informes.
+     * Permite subir documentos (Hoja de Vida, Formato Vinculación, Informes, Reportes de Firmas).
+     * Si es HOJA_DE_VIDA o FORMATO_VINCULACION, se elimina automáticamente la versión anterior.
      */
     @PostMapping("/documentos/subir")
     public String subirDocumento(
@@ -261,8 +283,22 @@ public class EstudianteController {
             @RequestParam("archivo") MultipartFile archivo)
             throws IOException {
 
-        Estudiante estudiante =
-                estudianteService.buscarPorId(estudianteId);
+        Estudiante estudiante = estudianteService.buscarPorId(estudianteId);
+
+        // Si es Hoja de Vida o Formato de Vinculación, eliminar versión anterior
+        if ("HOJA_DE_VIDA".equals(tipoDocumento) || "FORMATO_VINCULACION".equals(tipoDocumento)) {
+            List<Documento> existentes = documentoService.listarPorEstudiante(estudianteId);
+            for (Documento doc : existentes) {
+                if (tipoDocumento.equals(doc.getTipoDocumento())) {
+                    try {
+                        Files.deleteIfExists(Paths.get(doc.getRutaArchivo()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    documentoService.eliminar(doc.getId());
+                }
+            }
+        }
 
         String rutaArchivo = guardarArchivoEnDisco(
                 archivo,
@@ -270,7 +306,6 @@ public class EstudianteController {
         );
 
         Documento documento = new Documento();
-
         documento.setEstudiante(estudiante);
         documento.setTipoDocumento(tipoDocumento);
         documento.setNombreArchivo(archivo.getOriginalFilename());
@@ -283,6 +318,31 @@ public class EstudianteController {
     }
 
     /*
+     * Permite eliminar un documento guardado.
+     */
+    @PostMapping("/documentos/eliminar/{id}")
+    public String eliminarDocumento(
+            @PathVariable Long id,
+            @RequestParam("estudianteId") Long estudianteId) {
+
+        Documento documento = documentoService.listarTodos().stream()
+                .filter(d -> d.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (documento != null) {
+            try {
+                Files.deleteIfExists(Paths.get(documento.getRutaArchivo()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            documentoService.eliminar(id);
+        }
+
+        return "redirect:/estudiante/documentos/" + estudianteId;
+    }
+
+    /*
      * Muestra todos los documentos del estudiante.
      */
     @GetMapping("/documentos/{estudianteId}")
@@ -290,8 +350,7 @@ public class EstudianteController {
             @PathVariable Long estudianteId,
             Model model) {
 
-        List<Documento> documentos =
-                documentoService.listarPorEstudiante(estudianteId);
+        List<Documento> documentos = documentoService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("documentos", documentos);
         model.addAttribute("estudianteId", estudianteId);
@@ -300,8 +359,7 @@ public class EstudianteController {
     }
 
     /*
-     * Endpoint para descargar o visualizar directamente un documento (Hoja de Vida).
-     * Accesible tanto por la Empresa como por el Estudiante.
+     * Endpoint para descargar documentos.
      */
     @GetMapping("/documentos/descargar/{id}")
     @ResponseBody
@@ -333,19 +391,18 @@ public class EstudianteController {
     }
 
     /*
-     * Permite subir evidencias de la práctica,
-     * como fotografías y comentarios.
+     * Permite subir evidencias asignando 'tipoActividad' para evitar violar restricciones NOT NULL.
      */
     @PostMapping("/evidencias/subir")
     public String subirEvidencia(
             @RequestParam("estudianteId") Long estudianteId,
             @RequestParam("titulo") String titulo,
             @RequestParam("descripcion") String descripcion,
+            @RequestParam(value = "tipoActividad", required = false, defaultValue = "Avance General") String tipoActividad,
             @RequestParam("archivo") MultipartFile archivo)
             throws IOException {
 
-        Estudiante estudiante =
-                estudianteService.buscarPorId(estudianteId);
+        Estudiante estudiante = estudianteService.buscarPorId(estudianteId);
 
         String rutaArchivo = guardarArchivoEnDisco(
                 archivo,
@@ -353,14 +410,54 @@ public class EstudianteController {
         );
 
         Evidencia evidencia = new Evidencia();
-
         evidencia.setEstudiante(estudiante);
         evidencia.setTitulo(titulo);
         evidencia.setDescripcion(descripcion);
+        evidencia.setTipoActividad(tipoActividad);
         evidencia.setRutaArchivo(rutaArchivo);
         evidencia.setFechaSubida(LocalDate.now());
 
         evidenciaService.guardar(evidencia);
+
+        return "redirect:/estudiante/evidencias/" + estudianteId;
+    }
+
+    /*
+     * Permite actualizar la información de una evidencia guardada previamente.
+     */
+    @PostMapping("/evidencias/actualizar")
+    public String actualizarEvidencia(
+            @RequestParam("id") Long id,
+            @RequestParam("estudianteId") Long estudianteId,
+            @RequestParam("titulo") String titulo,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam(value = "tipoActividad", required = false, defaultValue = "Avance General") String tipoActividad) {
+
+        Evidencia evidencia = evidenciaService.listarTodos().stream()
+                .filter(e -> e.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (evidencia != null) {
+            evidencia.setTitulo(titulo);
+            evidencia.setDescripcion(descripcion);
+            evidencia.setTipoActividad(tipoActividad);
+
+            evidenciaService.guardar(evidencia);
+        }
+
+        return "redirect:/estudiante/evidencias/" + estudianteId;
+    }
+
+    /*
+     * Permite eliminar una evidencia guardada.
+     */
+    @PostMapping("/evidencias/eliminar/{id}")
+    public String eliminarEvidencia(
+            @PathVariable Long id,
+            @RequestParam("estudianteId") Long estudianteId) {
+
+        evidenciaService.eliminar(id);
 
         return "redirect:/estudiante/evidencias/" + estudianteId;
     }
@@ -373,8 +470,7 @@ public class EstudianteController {
             @PathVariable Long estudianteId,
             Model model) {
 
-        List<Evidencia> evidencias =
-                evidenciaService.listarPorEstudiante(estudianteId);
+        List<Evidencia> evidencias = evidenciaService.listarPorEstudiante(estudianteId);
 
         model.addAttribute("evidencias", evidencias);
         model.addAttribute("estudianteId", estudianteId);
@@ -383,8 +479,19 @@ public class EstudianteController {
     }
 
     /*
-     * Guarda un archivo en la carpeta correspondiente,
-     * normaliza separadores de ruta a '/' y devuelve la ruta.
+     * Manejador de excepciones para exceso de tamaño de archivo al subir.
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String manejarExcesoTamano(
+            MaxUploadSizeExceededException exc,
+            RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (50 MB). Por favor adjunta un archivo más liviano.");
+        return "redirect:/estudiante/evidencias/1";
+    }
+
+    /*
+     * Guarda un archivo en el sistema de archivos y normaliza separadores de ruta.
      */
     private String guardarArchivoEnDisco(
             MultipartFile archivo,
@@ -397,16 +504,11 @@ public class EstudianteController {
             carpeta.mkdirs();
         }
 
-        String nombreFinal =
-                System.currentTimeMillis()
-                        + "_"
-                        + archivo.getOriginalFilename();
-
+        String nombreFinal = System.currentTimeMillis() + "_" + archivo.getOriginalFilename();
         Path destino = Path.of(carpetaDestino, nombreFinal);
 
         Files.copy(archivo.getInputStream(), destino);
 
-        // Normalizar la ruta reemplazando separadores de Windows (\) por barras estándar (/)
         return destino.toString().replace("\\", "/");
     }
 }

@@ -14,41 +14,144 @@
   <div th:replace="~{fragments/estudiante-sidebar :: sidebar(activePage='documentos', estudianteId=${estudianteId})}"></div>
 
   <div class="student-content">
-    <div class="p-7" style="max-width:720px">
+    <div class="p-7 max-w-6xl">
+      
+      <!-- Header -->
       <div class="mb-6">
         <h1 class="text-2xl font-bold font-display text-slate-900">Mis documentos</h1>
-        <p class="text-slate-500 text-sm mt-1">Hoja de vida, formatos e informes</p>
+        <p class="text-slate-500 text-sm mt-1">Gestión de Hoja de vida, Vinculación, Informes y Control de Firmas Semanales</p>
       </div>
 
-      <!-- Subir documento -->
-      <form th:action="@{/estudiante/documentos/subir}" method="post" enctype="multipart/form-data"
-            class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm mb-4 flex gap-3 items-end">
-        <input type="hidden" name="estudianteId" th:value="${estudianteId}">
-        <div class="flex-1">
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Tipo de documento</label>
-          <select name="tipoDocumento" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-            <option value="HOJA_DE_VIDA">Hoja de vida</option>
-            <option value="FORMATO_VINCULACION">Formato de vinculación</option>
-            <option value="INFORME">Informe</option>
-          </select>
-        </div>
-        <div class="flex-1">
-          <label class="text-xs font-medium text-slate-700 mb-1 block">Archivo</label>
-          <input type="file" name="archivo" required class="w-full text-sm">
-        </div>
-        <button type="submit" class="text-sm font-semibold text-white bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-800">Subir</button>
-      </form>
+      <!-- Sección Principal: Documentos Base de la Práctica (Única Versión) -->
+      <div class="grid grid-cols-2 gap-5 mb-8">
+        
+        <!-- Tarjeta Hoja de Vida -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="p-2 bg-blue-50 text-blue-700 rounded-xl text-xl">📄</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Documento Único</span>
+            </div>
+            <h2 class="text-base font-bold text-slate-900">Hoja de Vida (CV)</h2>
+            <p class="text-xs text-slate-500 mt-0.5 mb-4">Documento principal para postulación a empresas.</p>
 
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-100">
-        <div th:each="d : ${documentos}" class="flex items-center gap-3 px-5 py-4">
-          <span class="text-xl">📄</span>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-slate-900" th:text="${d.nombreArchivo}">archivo.pdf</p>
-            <p class="text-xs text-slate-500" th:text="${d.tipoDocumento} + ' · ' + ${d.fechaSubida}">Tipo · Fecha</p>
+            <!-- Si existe Hoja de Vida -->
+            <div th:each="d : ${documentos}" th:if="${d.tipoDocumento == 'HOJA_DE_VIDA'}" class="p-3 bg-slate-50 border border-slate-100 rounded-xl mb-3">
+              <p class="text-xs font-bold text-slate-800 truncate" th:text="${d.nombreArchivo}">CV.pdf</p>
+              <p class="text-[11px] text-slate-400 mt-0.5" th:text="'Última versión: ' + ${d.fechaSubida}">Fecha</p>
+            </div>
           </div>
+
+          <!-- Formulario de Subida / Reemplazo -->
+          <form th:action="@{/estudiante/documentos/subir}" method="post" enctype="multipart/form-data" class="space-y-2 pt-3 border-t border-slate-100">
+            <input type="hidden" name="estudianteId" th:value="${estudianteId}">
+            <input type="hidden" name="tipoDocumento" value="HOJA_DE_VIDA">
+            <label class="block text-[11px] font-semibold text-slate-600">Reemplazar / Subir Hoja de Vida (PDF)</label>
+            <div class="flex gap-2 items-center">
+              <input type="file" name="archivo" required accept=".pdf" class="text-xs text-slate-500 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer w-full">
+              <button type="submit" class="text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors">
+                Subir
+              </button>
+            </div>
+          </form>
         </div>
-        <p th:if="${#lists.isEmpty(documentos)}" class="text-center text-sm text-slate-400 py-8">Aún no has subido documentos.</p>
+
+        <!-- Tarjeta Formato de Vinculación / Contrato -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="p-2 bg-emerald-50 text-emerald-700 rounded-xl text-xl">📝</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Documento Único</span>
+            </div>
+            <h2 class="text-base font-bold text-slate-900">Formato de Vinculación</h2>
+            <p class="text-xs text-slate-500 mt-0.5 mb-4">Contrato firmado o carta de aceptación institucional.</p>
+
+            <!-- Si existe Formato de Vinculación -->
+            <div th:each="d : ${documentos}" th:if="${d.tipoDocumento == 'FORMATO_VINCULACION'}" class="p-3 bg-slate-50 border border-slate-100 rounded-xl mb-3">
+              <p class="text-xs font-bold text-slate-800 truncate" th:text="${d.nombreArchivo}">Contrato.pdf</p>
+              <p class="text-[11px] text-slate-400 mt-0.5" th:text="'Cargado el: ' + ${d.fechaSubida}">Fecha</p>
+            </div>
+          </div>
+
+          <!-- Formulario de Subida / Reemplazo -->
+          <form th:action="@{/estudiante/documentos/subir}" method="post" enctype="multipart/form-data" class="space-y-2 pt-3 border-t border-slate-100">
+            <input type="hidden" name="estudianteId" th:value="${estudianteId}">
+            <input type="hidden" name="tipoDocumento" value="FORMATO_VINCULACION">
+            <label class="block text-[11px] font-semibold text-slate-600">Reemplazar / Subir Formato Firmado (PDF)</label>
+            <div class="flex gap-2 items-center">
+              <input type="file" name="archivo" required accept=".pdf,.doc,.docx" class="text-xs text-slate-500 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer w-full">
+              <button type="submit" class="text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors">
+                Subir
+              </button>
+            </div>
+          </form>
+        </div>
+
       </div>
+
+      <!-- Sección Secundarios: Carga Recurrente (Informes y Firmas Semanales) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8">
+        <h2 class="text-base font-bold text-slate-900 mb-1">Cargar Informes o Control de Firmas Semanales</h2>
+        <p class="text-xs text-slate-500 mb-4">Sube tus reportes periódicos de práctica o planillas con firmas del tutor de la empresa y del estudiante.</p>
+
+        <form th:action="@{/estudiante/documentos/subir}" method="post" enctype="multipart/form-data" class="grid grid-cols-3 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <input type="hidden" name="estudianteId" th:value="${estudianteId}">
+
+          <div>
+            <label class="text-xs font-semibold text-slate-700 mb-1 block">Tipo de entrega</label>
+            <select name="tipoDocumento" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none bg-white">
+              <option value="INFORME">Informe de Avance / Final</option>
+              <option value="REPORTES_FIRMAS">Control de Firmas Semanales (Empresa y Estudiante)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-slate-700 mb-1 block">Archivo (PDF / Word)</label>
+            <input type="file" name="archivo" required accept=".pdf,.doc,.docx" class="w-full text-xs text-slate-500 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 cursor-pointer">
+          </div>
+
+          <button type="submit" class="text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 px-4 py-2.5 rounded-lg transition-colors">
+            📤 Registrar Entrega
+          </button>
+        </form>
+      </div>
+
+      <!-- Listado de Entregas Periódicas -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Historial de Informes y Planillas de Firmas</h3>
+        </div>
+
+        <div class="divide-y divide-slate-100">
+          <div th:each="d : ${documentos}" th:if="${d.tipoDocumento == 'INFORME' or d.tipoDocumento == 'REPORTES_FIRMAS'}" class="flex items-center justify-between px-5 py-3.5">
+            <div class="flex items-center gap-3">
+              <span class="text-lg" th:text="${d.tipoDocumento == 'REPORTES_FIRMAS' ? '✍️' : '📊'}">📊</span>
+              <div>
+                <p class="text-xs font-bold text-slate-900" th:text="${d.nombreArchivo}">Informe_Semana_1.pdf</p>
+                <p class="text-[11px] text-slate-400" th:text="${d.tipoDocumento == 'REPORTES_FIRMAS' ? 'Planilla de Firmas Semanales' : 'Informe Técnico'} + ' · Subido el ' + ${d.fechaSubida}">Categoría · Fecha</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a th:href="@{/estudiante/documentos/descargar/{id}(id=${d.id})}" target="_blank" class="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-lg hover:bg-blue-100 transition-colors">
+                📥 Descargar
+              </a>
+
+              <form th:action="@{/estudiante/documentos/eliminar/{id}(id=${d.id})}" method="post" onsubmit="return confirm('¿Deseas eliminar este archivo?');">
+                <input type="hidden" name="estudianteId" th:value="${estudianteId}">
+                <button type="submit" class="text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-lg hover:bg-red-100 transition-colors">
+                  🗑️
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <p th:if="${#lists.isEmpty(documentos)}" class="text-center text-xs text-slate-400 py-8">
+            Aún no has registrado informes o planillas de firmas.
+          </p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
