@@ -8,7 +8,7 @@
   <link rel="stylesheet" th:href="@{/css/global.css}">
   <link rel="stylesheet" th:href="@{/css/tutor.css}">
 </head>
-<body>
+<body class="bg-slate-100 text-slate-900 font-sans">
 <div class="tutor-layout">
 
   <div th:with="tutorIdParam=${param.tutorId}">
@@ -22,7 +22,7 @@
           <h1 class="text-2xl font-bold font-display text-slate-900">Empresas aliadas</h1>
           <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(empresas)} + ' empresas registradas'">0</p>
         </div>
-        <a th:href="@{/tutor/empresas/nueva}" class="bg-violet-700 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-violet-800">
+        <a th:href="@{/tutor/empresas/nueva}" class="bg-violet-700 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-violet-800 transition-colors shadow-sm">
           + Registrar empresa
         </a>
       </div>
@@ -35,17 +35,106 @@
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Sector</th>
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Contacto</th>
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estudiantes</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="e : ${empresas}" class="border-b border-slate-100 hover:bg-slate-50">
-              <td class="px-4 py-3 text-sm font-medium text-slate-900" th:text="${e.nombreEmpresa}">Empresa</td>
+            <tr th:each="e : ${empresas}" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 text-sm font-bold text-slate-900" th:text="${e.nombreEmpresa}">Empresa</td>
               <td class="px-4 py-3 text-xs text-slate-600" th:text="${e.sector}">Sector</td>
               <td class="px-4 py-3 text-xs text-slate-600" th:text="${e.nombreContacto}">Contacto</td>
-              <td class="px-4 py-3 text-sm font-bold text-emerald-600" th:text="${#lists.size(e.estudiantes)}">0</td>
+              <td class="px-4 py-3 text-sm font-bold text-emerald-600" th:text="${e.estudiantes != null ? #lists.size(e.estudiantes) : 0}">0</td>
+              <td class="px-4 py-3 text-center">
+                
+                <!-- Botón Ver detalles -->
+                <button type="button" th:onclick="'abrirModalDetalles(' + ${e.id} + ')'"
+                        class="text-xs font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs">
+                   Ver detalle
+                </button>
+
+                <!-- Modal de Detalles de la Empresa -->
+                <div th:id="'modal-detalles-' + ${e.id}" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 text-left">
+                  <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
+                    
+                    <!-- Encabezado del Modal -->
+                    <div class="p-6 bg-slate-900 text-white flex items-start justify-between relative">
+                      <div>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-violet-300 bg-violet-950/80 px-2.5 py-1 rounded-full border border-violet-800 inline-block mb-2" th:text="${e.sector != null ? e.sector : 'SECTOR GENERAL'}">Sector</span>
+                        <h2 class="text-xl font-bold font-display leading-tight" th:text="${e.nombreEmpresa}">Nombre de la Empresa</h2>
+                        <p class="text-xs text-slate-400 mt-1" th:text="'NIT / Identificación: ' + ${e.nit != null ? e.nit : 'No registrado'}">NIT: 900123456-1</p>
+                      </div>
+                      <button type="button" th:onclick="'cerrarModalDetalles(' + ${e.id} + ')'" class="text-slate-400 hover:text-white font-bold text-lg p-1 transition-colors">✕</button>
+                    </div>
+
+                    <!-- Cuerpo del Modal -->
+                    <div class="p-6 overflow-y-auto space-y-5 text-sm">
+                      
+                      <!-- Sección 1: Información Corporativa -->
+                      <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 text-violet-700 flex items-center gap-1.5">
+                           Información Corporativa
+                        </h4>
+                        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
+                          <div>
+                            <p class="text-slate-400 text-[11px] font-medium">Razón Social</p>
+                            <p class="font-bold text-slate-800 mt-0.5" th:text="${e.nombreEmpresa}">Tech Solutions S.A.S.</p>
+                          </div>
+                          <div>
+                            <p class="text-slate-400 text-[11px] font-medium">NIT / Identificación</p>
+                            <p class="font-bold text-slate-800 mt-0.5" th:text="${e.nit != null ? e.nit : 'No especificado'}">900123456-1</p>
+                          </div>
+                          <div>
+                            <p class="text-slate-400 text-[11px] font-medium">Sector / Industria</p>
+                            <p class="font-bold text-slate-800 mt-0.5" th:text="${e.sector != null ? e.sector : 'General'}">Tecnología e Informática</p>
+                          </div>
+                          <div>
+                            <p class="text-slate-400 text-[11px] font-medium">Teléfono de contacto</p>
+                            <p class="font-bold text-slate-800 mt-0.5" th:text="${e.telefono != null ? e.telefono : 'No registrado'}">+57 (608) 1234567</p>
+                          </div>
+                          <div class="col-span-2">
+                            <p class="text-slate-400 text-[11px] font-medium">Dirección Principal</p>
+                            <p class="font-bold text-slate-800 mt-0.5" th:text="${e.direccion != null ? e.direccion : 'Sede Principal'}">Calle 123 # 45 - 67</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Sección 2: Encargado / Acceso -->
+                      <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 text-violet-700 flex items-center gap-1.5">
+                           Contacto de la Empresa & RRHH
+                        </h4>
+                        <div class="bg-violet-50/50 border border-violet-100 p-3.5 rounded-xl text-xs space-y-2">
+                          <div class="flex items-center justify-between">
+                            <span class="text-slate-500 font-medium">Nombre del Encargado:</span>
+                            <strong class="text-slate-800 font-bold" th:text="${e.nombreContacto != null ? e.nombreContacto : 'No especificado'}">Dra. María Fernanda Pérez</strong>
+                          </div>
+                          <div class="flex items-center justify-between pt-2 border-t border-violet-100/80">
+                            <span class="text-slate-500 font-medium">Correo Corporativo:</span>
+                            <strong class="text-violet-700 font-bold" th:text="${e.correo != null ? e.correo : (e.email != null ? e.email : 'No registrado')}">correo@empresa.com</strong>
+                          </div>
+                          <div class="flex items-center justify-between pt-2 border-t border-violet-100/80">
+                            <span class="text-slate-500 font-medium">Estudiantes Activos:</span>
+                            <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full text-[11px]" th:text="${e.estudiantes != null ? #lists.size(e.estudiantes) : 0} + ' asignados'">0 asignados</span>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!-- Pie del Modal -->
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                      <button type="button" th:onclick="'cerrarModalDetalles(' + ${e.id} + ')'" class="text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 px-5 py-2 rounded-xl transition-colors shadow-2xs">
+                        Cerrar vista
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </td>
             </tr>
             <tr th:if="${#lists.isEmpty(empresas)}">
-              <td colspan="4" class="text-center text-sm text-slate-400 py-8">No hay empresas registradas todavía.</td>
+              <td colspan="5" class="text-center text-sm text-slate-400 py-8">No hay empresas registradas todavía.</td>
             </tr>
           </tbody>
         </table>
@@ -53,5 +142,23 @@
     </div>
   </div>
 </div>
+
+<script>
+  function abrirModalDetalles(id) {
+    const modal = document.getElementById('modal-detalles-' + id);
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  function cerrarModalDetalles(id) {
+    const modal = document.getElementById('modal-detalles-' + id);
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+</script>
 </body>
 </html>

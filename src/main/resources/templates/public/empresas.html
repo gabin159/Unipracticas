@@ -27,7 +27,7 @@
       </button>
     </form>
 
-    <!-- Grilla de Tarjetas Medianas Elegantes (4 columnas en pantallas grandes) -->
+    <!-- Grilla de Tarjetas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       
       <!-- Mensaje cuando no hay empresas -->
@@ -35,10 +35,9 @@
         <p class="text-slate-500">No se encontraron empresas registradas con ese criterio.</p>
       </div>
 
-      <!-- Tarjeta de Empresa -->
-      <a th:each="empresa : ${empresas}" 
-         th:href="@{'/empresas/' + ${empresa.id}}" 
-         class="group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+      <!-- Tarjeta Informativa de Empresa (Sin redirección) -->
+      <div th:each="empresa : ${empresas}" 
+           class="group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between cursor-default">
         
         <div>
           <!-- Cabecera con Badge de Iniciales y Sector -->
@@ -53,8 +52,8 @@
             </span>
           </div>
 
-          <!-- Nombre de la Empresa -->
-          <h2 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight mb-2 line-clamp-1" 
+          <!-- Nombre de la Empresa (Cambia a azul y se subraya en hover) -->
+          <h2 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 group-hover:underline transition-colors leading-tight mb-2 line-clamp-1" 
               th:text="${empresa.nombreEmpresa}">
             Nombre de Empresa
           </h2>
@@ -63,14 +62,14 @@
         <!-- Ubicación / Dirección al pie -->
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-2">
           <div class="flex items-center gap-1 min-w-0">
-            <span class="text-blue-600">📍</span>
+            <span class="text-blue-600"></span>
             <span class="truncate text-[11px]" th:text="${empresa.direccion != null ? empresa.direccion : 'Sede principal'}">
               Dirección
             </span>
           </div>
         </div>
 
-      </a>
+      </div>
 
     </div>
   </main>

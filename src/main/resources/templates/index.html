@@ -33,17 +33,18 @@
       <p class="text-slate-500 text-sm mt-2">Selecciona tu rol para acceder a tu panel</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-3xl mx-auto">
-
-      <a th:href="@{/estudiante/login}" class="group flex flex-col items-center gap-4 bg-white border-2 border-slate-200 rounded-2xl p-7 hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="w-16 h-16 rounded-2xl bg-blue-100 group-hover:bg-blue-600 flex items-center justify-center transition-colors">
-          <span class="text-3xl">👨‍🎓</span>
+   <a th:href="@{/tutor/login}" class="group flex flex-col items-center gap-4 bg-white border-2 border-slate-200 rounded-2xl p-7 hover:border-violet-500 hover:shadow-lg hover:-translate-y-1 transition-all">
+        <div class="w-16 h-16 rounded-2xl bg-violet-100 group-hover:bg-violet-600 flex items-center justify-center transition-colors">
+          <span class="text-3xl">👨‍🏫</span>
         </div>
         <div class="text-center">
-          <p class="font-bold text-slate-900 text-base">Soy Estudiante</p>
-          <p class="text-slate-500 text-xs mt-1">Busca prácticas, postúlate y haz seguimiento</p>
+          <p class="font-bold text-slate-900 text-base">Soy Profesor</p>
+          <p class="text-slate-500 text-xs mt-1">Revisa postulaciones y evalúa a tus estudiantes</p>
         </div>
-        <span class="mt-auto text-xs font-semibold text-blue-700">Iniciar sesión →</span>
+        <span class="mt-auto text-xs font-semibold text-violet-700">Iniciar sesión →</span>
       </a>
+
+      
 
       <a th:href="@{/empresa/login}" class="group flex flex-col items-center gap-4 bg-white border-2 border-slate-200 rounded-2xl p-7 hover:border-amber-500 hover:shadow-lg hover:-translate-y-1 transition-all">
         <div class="w-16 h-16 rounded-2xl bg-amber-100 group-hover:bg-amber-500 flex items-center justify-center transition-colors">
@@ -56,15 +57,15 @@
         <span class="mt-auto text-xs font-semibold text-amber-700">Iniciar sesión →</span>
       </a>
 
-      <a th:href="@{/tutor/login}" class="group flex flex-col items-center gap-4 bg-white border-2 border-slate-200 rounded-2xl p-7 hover:border-violet-500 hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="w-16 h-16 rounded-2xl bg-violet-100 group-hover:bg-violet-600 flex items-center justify-center transition-colors">
-          <span class="text-3xl">👨‍🏫</span>
+   <a th:href="@{/estudiante/login}" class="group flex flex-col items-center gap-4 bg-white border-2 border-slate-200 rounded-2xl p-7 hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 transition-all">
+        <div class="w-16 h-16 rounded-2xl bg-blue-100 group-hover:bg-blue-600 flex items-center justify-center transition-colors">
+          <span class="text-3xl">👨‍🎓</span>
         </div>
         <div class="text-center">
-          <p class="font-bold text-slate-900 text-base">Soy Profesor</p>
-          <p class="text-slate-500 text-xs mt-1">Revisa postulaciones y evalúa a tus estudiantes</p>
+          <p class="font-bold text-slate-900 text-base">Soy Estudiante</p>
+          <p class="text-slate-500 text-xs mt-1">Busca prácticas, postúlate y haz seguimiento</p>
         </div>
-        <span class="mt-auto text-xs font-semibold text-violet-700">Iniciar sesión →</span>
+        <span class="mt-auto text-xs font-semibold text-blue-700">Iniciar sesión →</span>
       </a>
 
     </div>
@@ -176,20 +177,20 @@
     </div>
 
     <div class="flex flex-wrap gap-3">
-      <a th:each="empresa : ${empresas}" 
-         th:href="@{'/empresas/' + ${empresa.id}}" 
-         class="inline-flex items-center gap-2.5 bg-white border border-slate-200 rounded-xl px-3.5 py-2 hover:border-blue-400 hover:shadow-sm transition-all group">
+      <!-- Elemento estático con subrayado en el texto al pasar el cursor (hover:underline) -->
+      <div th:each="empresa : ${empresas}" 
+           class="inline-flex items-center gap-2.5 bg-white border border-slate-200 rounded-xl px-3.5 py-2 hover:border-blue-400 hover:shadow-sm transition-all group cursor-default">
         
         <span class="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center uppercase shadow-sm group-hover:scale-105 transition-transform"
               th:text="${#strings.substring(empresa.nombreEmpresa, 0, 2)}">
           EP
         </span>
 
-        <span class="text-slate-800 text-xs font-semibold group-hover:text-blue-700 transition-colors" 
+        <span class="text-slate-800 text-xs font-semibold group-hover:text-blue-700 group-hover:underline transition-colors" 
               th:text="${empresa.nombreEmpresa}">
           Nombre Empresa
         </span>
-      </a>
+      </div>
 
       <p th:if="${#lists.isEmpty(empresas)}" class="text-xs text-slate-400 py-4">
         Todavía no hay empresas aliadas registradas.

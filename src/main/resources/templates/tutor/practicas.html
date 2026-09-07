@@ -11,7 +11,7 @@
 <body>
 <div class="tutor-layout">
 
-  <!-- Igual que en estudiante/practicas: el controller no manda tutorId, lo leo del query param -->
+  <!-- Sidebar del Tutor -->
   <div th:with="tutorIdParam=${param.tutorId}">
     <div th:replace="~{fragments/tutor-sidebar :: sidebar(activePage='practicas', tutorId=${tutorIdParam})}"></div>
   </div>
@@ -20,19 +20,23 @@
     <div class="p-7">
       <div class="mb-6">
         <h1 class="text-2xl font-bold font-display text-slate-900">Prácticas</h1>
-        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' prácticas'">0</p>
+        <p class="text-slate-500 text-sm mt-1" th:text="${#lists.size(practicas)} + ' prácticas'">0 prácticas</p>
       </div>
 
-      <form th:action="@{/tutor/practicas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3">
+      <!-- Filtro de Búsqueda -->
+      <form th:action="@{/tutor/practicas}" method="get" class="bg-white rounded-xl border border-slate-200 p-4 mb-5 flex gap-3 shadow-sm">
         <input type="hidden" name="tutorId" th:value="${param.tutorId}">
-        <select name="estado" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none">
+        <select name="estado" class="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-violet-500">
           <option value="">Todos los estados</option>
           <option value="DISPONIBLE" th:selected="${estado == 'DISPONIBLE'}">Disponible</option>
           <option value="ASIGNADA" th:selected="${estado == 'ASIGNADA'}">Asignada</option>
         </select>
-        <button type="submit" class="text-sm font-semibold text-white bg-violet-700 px-4 py-2 rounded-lg hover:bg-violet-800">Filtrar</button>
+        <button type="submit" class="text-sm font-semibold text-white bg-violet-700 px-5 py-2 rounded-lg hover:bg-violet-800 transition-colors shadow-sm">
+          Filtrar
+        </button>
       </form>
 
+      <!-- Tabla de Prácticas -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <table class="w-full">
           <thead>
@@ -42,18 +46,98 @@
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Vacantes</th>
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Asignados</th>
               <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estado</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="p : ${practicas}" class="border-b border-slate-100 hover:bg-slate-50">
-              <td class="px-4 py-3 text-sm font-medium text-slate-900" th:text="${p.titulo}">Título</td>
-              <td class="px-4 py-3 text-xs text-slate-600" th:text="${p.empresa.nombreEmpresa}">Empresa</td>
+            <tr th:each="p : ${practicas}" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 text-sm font-bold text-slate-900" th:text="${p.titulo}">Título</td>
+              <td class="px-4 py-3 text-xs text-slate-600" th:text="${p.empresa != null ? p.empresa.nombreEmpresa : 'Empresa'}">Empresa</td>
               <td class="px-4 py-3 text-sm" th:text="${p.vacantes}">2</td>
-              <td class="px-4 py-3 text-sm font-semibold text-emerald-600" th:text="${#lists.size(p.estudiantes)}">0</td>
-              <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200" th:text="${p.estado}">Estado</span></td>
+              <td class="px-4 py-3 text-sm font-semibold text-emerald-600" th:text="${p.estudiantes != null ? #lists.size(p.estudiantes) : 0}">0</td>
+              <td class="px-4 py-3">
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200" th:text="${p.estado}">
+                  DISPONIBLE
+                </span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <!-- Botón Ver detalles -->
+                <button type="button" th:onclick="'abrirModalDetalles(' + ${p.id} + ')'"
+                        class="text-xs font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-sm">
+                  <span></span> Ver detalles
+                </button>
+
+                <!-- Modal con Detalles de la Oferta -->
+                <div th:id="'modal-detalles-' + ${p.id}" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4 text-left">
+                  <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
+                    
+                    <!-- Encabezado Modal -->
+                    <div class="p-6 bg-slate-900 text-white flex items-start justify-between relative">
+                      <div>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800 mb-2 inline-block" th:text="${p.area}">Área</span>
+                        <h2 class="text-xl font-bold font-display leading-tight" th:text="${p.titulo}">Título de la Práctica</h2>
+                        <p class="text-xs text-slate-400 mt-1" th:text="${p.empresa != null ? p.empresa.nombreEmpresa : 'Empresa'}">Empresa</p>
+                      </div>
+                      <button type="button" th:onclick="'cerrarModalDetalles(' + ${p.id} + ')'" class="text-slate-400 hover:text-white font-bold text-lg p-1">✕</button>
+                    </div>
+
+                    <!-- Cuerpo del Modal -->
+                    <div class="p-6 overflow-y-auto space-y-5 text-sm">
+                      
+                      <!-- Chips de Requisitos/Metadatos -->
+                      <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                        <div>
+                          <p class="text-slate-400 text-[11px]">Modalidad</p>
+                          <p class="font-bold text-slate-800 mt-0.5" th:text="${p.modalidad}">Presencial</p>
+                        </div>
+                        <div>
+                          <p class="text-slate-400 text-[11px]">Duración</p>
+                          <p class="font-bold text-slate-800 mt-0.5" th:text="${p.duracion != null ? p.duracion : '6 meses'}">6 Meses</p>
+                        </div>
+                        <div>
+                          <p class="text-slate-400 text-[11px]">Ubicación</p>
+                          <p class="font-bold text-slate-800 mt-0.5" th:text="${p.ciudadUbicacion != null ? p.ciudadUbicacion : 'Tunja'}">Ciudad</p>
+                        </div>
+                      </div>
+
+                      <!-- Descripción y Requisitos -->
+                      <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2 text-violet-700"> Descripción del puesto</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed whitespace-pre-line" th:text="${p.descripcion != null ? p.descripcion : 'No se ha especificado una descripción para esta vacante.'}">Detalles...</p>
+                      </div>
+
+                      <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2 text-violet-700"> Requisitos exigidos por la empresa</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed whitespace-pre-line" th:text="${p.requisitos != null ? p.requisitos : 'Estudiante activo de Ingeniería de Sistemas o carreras afines.'}">Requisitos...</p>
+                      </div>
+
+                      <!-- Información de Contacto -->
+                      <div class="p-3.5 bg-violet-50/50 border border-violet-100 rounded-xl flex items-center justify-between text-xs">
+                        <div>
+                          <p class="font-bold text-slate-800">Contacto de la Empresa</p>
+                          <p class="text-slate-500 text-[11px]" th:text="${p.empresa != null and p.empresa.correo != null ? p.empresa.correo : 'contacto@empresa.com'}">correo@empresa.com</p>
+                        </div>
+                        <span class="text-xs font-semibold text-violet-700 bg-white px-3 py-1 rounded-lg border border-violet-200">
+                          <span th:text="${p.vacantes}">2</span> Vacantes disponibles
+                        </span>
+                      </div>
+
+                    </div>
+
+                    <!-- Footer Modal -->
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                      <button type="button" th:onclick="'cerrarModalDetalles(' + ${p.id} + ')'" class="text-xs font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-lg transition-colors">
+                        Cerrar
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </td>
             </tr>
             <tr th:if="${#lists.isEmpty(practicas)}">
-              <td colspan="5" class="text-center text-sm text-slate-400 py-8">No hay prácticas registradas.</td>
+              <td colspan="6" class="text-center text-sm text-slate-400 py-8">No hay prácticas registradas.</td>
             </tr>
           </tbody>
         </table>
@@ -61,5 +145,23 @@
     </div>
   </div>
 </div>
+
+<script>
+  function abrirModalDetalles(id) {
+    const modal = document.getElementById('modal-detalles-' + id);
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  function cerrarModalDetalles(id) {
+    const modal = document.getElementById('modal-detalles-' + id);
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+</script>
 </body>
 </html>
