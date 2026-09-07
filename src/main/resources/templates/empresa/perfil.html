@@ -21,8 +21,8 @@
         <p class="text-slate-500 text-sm mt-1">Panel de la empresa</p>
       </div>
 
-      <!-- Estadísticas -->
-      <div class="grid grid-cols-3 gap-4 mb-6">
+      <!-- Estadísticas (Ajustado a 2 columnas sin 'Asignadas') -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
         <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
           <p class="text-xs text-slate-500 mb-1">Prácticas publicadas</p>
           <p class="text-2xl font-bold text-blue-700" th:text="${#lists.size(empresa.practicas)}">0</p>
@@ -31,13 +31,10 @@
           <p class="text-xs text-slate-500 mb-1">Disponibles</p>
           <p class="text-2xl font-bold text-emerald-600" th:text="${#lists.size(empresa.practicas.?[estado == 'DISPONIBLE'])}">0</p>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <p class="text-xs text-slate-500 mb-1">Asignadas</p>
-          <p class="text-2xl font-bold text-amber-600" th:text="${#lists.size(empresa.practicas.?[estado == 'ASIGNADA'])}">0</p>
-        </div>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
+        <!-- Columna izquierda (Principal) -->
         <div class="col-span-2 space-y-4">
 
           <!-- Prácticas publicadas -->
@@ -151,16 +148,17 @@
 
         </div>
 
-        <!-- Columna derecha -->
+        <!-- Columna derecha (Reubicada la tarjeta en la parte superior) -->
         <div class="space-y-4">
-          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-center">
-            <div class="w-16 h-16 rounded-xl bg-amber-500 flex items-center justify-center mx-auto mb-3 text-white text-xl font-bold uppercase">
+          <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm text-center">
+            <div class="w-20 h-20 rounded-2xl bg-amber-500 flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold uppercase shadow-sm">
               <span th:text="${#strings.substring(empresa.nombreEmpresa,0,1)}">E</span>
             </div>
-            <p class="font-bold text-slate-900" th:text="${empresa.nombreEmpresa}">Empresa</p>
-            <p class="text-xs text-slate-500" th:text="${empresa.sector}">Sector</p>
+            <p class="font-bold text-slate-900 text-lg leading-snug" th:text="${empresa.nombreEmpresa}">Empresa</p>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1" th:text="${empresa.sector}">Sector</p>
           </div>
         </div>
+
       </div>
     </div>
   </div>
